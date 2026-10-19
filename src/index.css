@@ -311,3 +311,37 @@ main {
   outline: 3px solid var(--focus);
   outline-offset: 2px;
 }
+
+.landing {
+  display: grid;
+  justify-items: center;
+  gap: 1rem;
+  max-width: 32rem;
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding: 2rem 1.25rem;
+  align-content: center;
+  text-align: center;
+  animation: landing-in 300ms ease-out;
+}
+
+.landing h1 {
+  margin: 0;
+}
+
+.landing p {
+  margin: 0;
+}
+
+@keyframes landing-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing {
+    animation: none;
+  }
+}
