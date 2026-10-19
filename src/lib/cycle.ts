@@ -2,10 +2,10 @@ import type { Shift, ShiftCode, ShiftType } from './types'
 import { zonedToUtc } from './time'
 
 export const DEFAULT_SHIFT_TYPES: ShiftType[] = [
-  { code: 'M', label: 'Morning', startTime: '06:00', durationMinutes: 480 },
-  { code: 'P', label: 'Afternoon', startTime: '14:00', durationMinutes: 480 },
-  { code: 'N', label: 'Night', startTime: '22:00', durationMinutes: 480 },
-  { code: 'R', label: 'Rest', startTime: '00:00', durationMinutes: 1440 },
+  { code: 'M', label: 'Mattina', startTime: '06:00', durationMinutes: 480 },
+  { code: 'P', label: 'Pomeriggio', startTime: '14:00', durationMinutes: 480 },
+  { code: 'N', label: 'Notte', startTime: '22:00', durationMinutes: 480 },
+  { code: 'R', label: 'Riposo', startTime: '00:00', durationMinutes: 1440 },
 ]
 
 // Calendar arithmetic on the date string: adding 24h of milliseconds breaks on DST days.
