@@ -108,3 +108,144 @@ main {
     transition: none;
   }
 }
+
+/* Home page */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.home h1 {
+  font-size: 1.4rem;
+  margin: 0 0 1rem;
+}
+
+.home h2 {
+  font-size: 1.05rem;
+  margin: 1.5rem 0 0.5rem;
+}
+
+.card {
+  background: var(--surface);
+  border-left: 0.4rem solid var(--grey);
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+}
+
+.card p {
+  margin: 0.25rem 0;
+}
+
+.card .big {
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+[data-code='M'] { --shift: var(--blue); }
+[data-code='P'] { --shift: var(--amber); }
+[data-code='N'] { --shift: var(--purple); }
+[data-code='R'], [data-code='none'] { --shift: var(--grey); }
+
+.card[data-code] {
+  border-left-color: var(--shift, var(--grey));
+}
+
+.upcoming {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.upcoming li {
+  background: var(--surface);
+  border-left: 0.4rem solid var(--shift, var(--grey));
+  border-radius: 0.5rem;
+  padding: 0.6rem 0.9rem;
+}
+
+.hint {
+  margin: 0 0 0.5rem;
+  font-size: 0.875rem;
+}
+
+.mini-month {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 2px;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.mini-month caption {
+  text-align: left;
+  font-weight: 700;
+  text-transform: capitalize;
+  padding-bottom: 0.25rem;
+}
+
+.mini-month td {
+  background: var(--surface);
+  border-radius: 0.3rem;
+  padding: 0.3rem 0;
+}
+
+.mini-month td:empty {
+  background: none;
+}
+
+.mini-month td span {
+  display: block;
+  font-size: 0.7rem;
+  opacity: 0.8;
+}
+
+.mini-month td[aria-current='date'] {
+  outline: 2px solid var(--accent);
+  font-weight: 700;
+}
+
+.button {
+  min-height: 44px;
+  padding: 0.5rem 1.1rem;
+  border: 0;
+  border-radius: 0.5rem;
+  background: var(--accent);
+  color: var(--bg);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.skeleton-wrap {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.skeleton {
+  height: 4.5rem;
+  border-radius: 0.5rem;
+  background: linear-gradient(90deg, var(--surface), color-mix(in srgb, var(--grey) 25%, var(--surface)), var(--surface));
+  background-size: 200% 100%;
+}
+
+.skeleton.tall {
+  height: 12rem;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .skeleton {
+    animation: shimmer 1.4s linear infinite;
+  }
+}
+
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
