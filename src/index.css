@@ -345,3 +345,13 @@ main {
     animation: none;
   }
 }
+
+.language-select {
+  margin-block: 1rem;
+}
+
+.language-select select {
+  min-block-size: 2.75rem;
+  padding-inline: 0.5rem;
+  font: inherit;
+}

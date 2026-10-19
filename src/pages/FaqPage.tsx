@@ -1,30 +1,21 @@
-const FAQ: { q: string; a: string }[] = [
-  {
-    q: "Che cos'è quest'app?",
-    a: 'Un calendario dei turni condiviso dal gruppo: mostra chi lavora oggi, i tuoi prossimi turni e il mese. Questa è una demo con dati di esempio inventati.',
-  },
-  {
-    q: 'Come funzionano le 48 ore?',
-    a: 'La regola delle 48 ore riguarderà le richieste di cambio turno. Non è ancora attiva: arriverà in una versione successiva.',
-  },
-  {
-    q: 'Come si vota?',
-    a: 'Le proposte aperte si potranno votare in una versione successiva. Per ora la demo è in sola lettura.',
-  },
-  {
-    q: 'Dove stanno i miei dati?',
-    a: 'In questa demo i dati sono di esempio e vengono generati nel tuo browser: non lasciano il tuo dispositivo e non c’è nessun account.',
-  },
-]
+import { useI18n } from '../i18n/I18nContext'
+
+const FAQ = [
+  { q: 'faq.q1', a: 'faq.a1' },
+  { q: 'faq.q2', a: 'faq.a2' },
+  { q: 'faq.q3', a: 'faq.a3' },
+  { q: 'faq.q4', a: 'faq.a4' },
+] as const
 
 export function FaqPage() {
+  const { t } = useI18n()
   return (
     <div className="page">
-      <h1>Domande frequenti</h1>
+      <h1>{t('faq.title')}</h1>
       {FAQ.map(({ q, a }) => (
         <details key={q} className="faq">
-          <summary>{q}</summary>
-          <p>{a}</p>
+          <summary>{t(q)}</summary>
+          <p>{t(a)}</p>
         </details>
       ))}
     </div>

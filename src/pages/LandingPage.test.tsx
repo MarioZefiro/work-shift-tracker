@@ -1,12 +1,13 @@
-import { cleanup, fireEvent, render, screen } from '@testing-library/react'
+import { cleanup, fireEvent, screen } from '@testing-library/react'
 import { afterEach, expect, test, vi } from 'vitest'
 import { LandingPage } from './LandingPage'
+import { renderWithI18n } from '../i18n/test-utils'
 
 afterEach(cleanup)
 
 test('LandingPage shows the demo notice and the start button', () => {
   const onStart = vi.fn()
-  render(<LandingPage onStart={onStart} />)
+  renderWithI18n(<LandingPage onStart={onStart} />)
   expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument()
   expect(screen.getByText('Progetto dimostrativo: non usare dati reali sensibili')).toBeInTheDocument()
   fireEvent.click(screen.getByRole('button', { name: 'Prova la demo' }))

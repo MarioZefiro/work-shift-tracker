@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useState } from 'react'
 import type { DataSource } from '../data/DataSource'
+import { useI18n } from '../i18n/I18nContext'
 import { formatShift } from '../lib/format'
 import { todayView, workingCountByDate } from '../lib/home'
+import { localDateIn } from '../lib/time'
 import type { Group, Shift, ShiftType } from '../lib/types'
 import { MiniMonth } from './MiniMonth'
 
@@ -11,12 +13,11 @@ type State =
   | { status: 'ready'; group: Group; shifts: Shift[] }
 
 const pad = (n: number) => String(n).padStart(2, '0')
-const DAY = new Intl.DateTimeFormat('it-IT', { timeZone: 'UTC', weekday: 'short', day: 'numeric', month: 'long' })
-const TODAY = new Intl.DateTimeFormat('it-IT', { timeZone: 'UTC', weekday: 'long', day: 'numeric', month: 'long' })
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
 const asUtc = (date: string) => new Date(`${date}T12:00:00Z`)
 
 export function HomePage({ source, now }: { source: DataSource; now: Date }) {
+  const { locale, t, list } = useI18n()
   const [state, setState] = useState<State>({ status: 'loading' })
 
   const load = useCallback(() => {
@@ -42,7 +43,7 @@ export function HomePage({ source, now }: { source: DataSource; now: Date }) {
   if (state.status === 'loading') {
     return (
       <div role="status" className="skeleton-wrap">
-        <span className="visually-hidden">Caricamento</span>
+        <span className="visually-hidden">{t('state.loading')}</span>
         <div className="skeleton" aria-hidden="true" />
         <div className="skeleton" aria-hidden="true" />
         <div className="skeleton tall" aria-hidden="true" />
@@ -52,16 +53,21 @@ export function HomePage({ source, now }: { source: DataSource; now: Date }) {
   if (state.status === 'error') {
     return (
       <div role="alert" className="card">
-        <p>Non riesco a caricare i turni. Controlla la connessione e riprova.</p>
+        <p>{t('error.shifts')}</p>
         <button type="button" className="button" onClick={load}>
-          Riprova
+          {t('state.retry')}
         </button>
       </div>
     )
   }
 
   const { group, shifts } = state
-  const typeOf = (code: Shift['code']): ShiftType => group.shiftTypes.find((t) => t.code === code)!
+  // Labels come from the dictionary; the group's stored label is only the Italian default.
+  const typeOf = (code: Shift['code']): ShiftType => ({
+    ...group.shiftTypes.find((s) => s.code === code)!,
+    label: t(`shift.${code}`),
+  })
+  const dayFmt = (opts: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat(locale, { timeZone: 'UTC', ...opts })
   const { today, mine, colleagues, upcoming } = todayView({
     now,
     timeZone: group.timeZone,
@@ -74,29 +80,29 @@ export function HomePage({ source, now }: { source: DataSource; now: Date }) {
 
   return (
     <div className="home">
-      <h1>Oggi, {TODAY.format(asUtc(today))}</h1>
-      <section className="card" data-code={mine?.code ?? 'none'} aria-label="Il tuo turno di oggi">
+      <h1>{t('home.title', { date: dayFmt({ weekday: 'long', day: 'numeric', month: 'long' }).format(asUtc(today)) })}</h1>
+      <section className="card" data-code={mine?.code ?? 'none'} aria-label={t('home.mineLabel')}>
         {!mine ? (
-          <p>Nessun turno oggi</p>
+          <p>{t('home.none')}</p>
         ) : mine.code === 'R' ? (
-          <p>Oggi riposi</p>
+          <p>{t('home.rest')}</p>
         ) : (
           <>
-            <p className="big">Il tuo turno: {formatShift(mine, typeOf(mine.code), group.timeZone)}</p>
-            {colleagues.length > 0 && <p>Con te: {colleagues.map((c) => c.name).join(', ')}</p>}
+            <p className="big">{t('home.mine', { shift: formatShift(mine, typeOf(mine.code), group.timeZone) })}</p>
+            {colleagues.length > 0 && <p>{t('home.withYou', { names: list(colleagues.map((c) => c.name)) })}</p>}
           </>
         )}
       </section>
 
       <section aria-labelledby="prossimi">
-        <h2 id="prossimi">Prossimi</h2>
+        <h2 id="prossimi">{t('home.upcoming')}</h2>
         {upcoming.length === 0 ? (
-          <p>Nessun turno nei prossimi giorni.</p>
+          <p>{t('home.upcomingEmpty')}</p>
         ) : (
-          <ul className="upcoming" aria-label="Prossimi turni">
+          <ul className="upcoming" aria-label={t('home.upcomingList')}>
             {upcoming.map((s) => (
               <li key={s.id} data-code={s.code}>
-                {cap(DAY.format(asUtc(dateOf(s))))} · {formatShift(s, typeOf(s.code), group.timeZone)}
+                {cap(dayFmt({ weekday: 'short', day: 'numeric', month: 'long' }).format(asUtc(dateOf(s))))} · {formatShift(s, typeOf(s.code), group.timeZone)}
               </li>
             ))}
           </ul>
@@ -104,9 +110,13 @@ export function HomePage({ source, now }: { source: DataSource; now: Date }) {
       </section>
 
       <section aria-labelledby="mese">
-        <h2 id="mese">Il mese</h2>
-        <p className="hint">Il numero piccolo indica quante persone sono in servizio.</p>
-        <MiniMonth today={today} counts={workingCountByDate(shifts, group.timeZone)} />
+        <h2 id="mese">{t('home.month')}</h2>
+        <p className="hint">{t('home.monthHint')}</p>
+        <MiniMonth
+          today={today}
+          counts={workingCountByDate(shifts, group.timeZone)}
+          hasData={new Set(shifts.map((s) => localDateIn(new Date(s.startsAt), group.timeZone)))}
+        />
       </section>
     </div>
   )

@@ -1,19 +1,23 @@
+import { useI18n } from '../i18n/I18nContext'
+import { LanguageSelect } from '../i18n/LanguageSelect'
 import type { DataSource } from '../data/DataSource'
 import { GroupGate } from './GroupGate'
 
 export function SettingsPage({ source, onLeave }: { source: DataSource; onLeave?: () => void }) {
+  const { t } = useI18n()
   return (
     <GroupGate source={source}>
       {(group) => (
         <div className="page">
-          <h1>Impostazioni</h1>
+          <h1>{t('settings.title')}</h1>
+          <LanguageSelect />
           <dl className="card facts">
-            <dt>Fuso orario del gruppo</dt>
+            <dt>{t('settings.timeZone')}</dt>
             <dd>{group.timeZone}</dd>
           </dl>
-          <p className="hint">Le modifiche e le notifiche arriveranno in una versione successiva.</p>
+          <p className="hint">{t('settings.later')}</p>
           <button type="button" className="button" onClick={onLeave}>
-            Esci dalla demo
+            {t('settings.leave')}
           </button>
         </div>
       )}

@@ -1,15 +1,18 @@
 import { useEffect, useRef, type ReactNode } from 'react'
+import { useI18n } from '../i18n/I18nContext'
+import type { MessageKey } from '../i18n/messages/it'
 import type { Route } from './useRoute'
 
-const LINKS: readonly { route: Route; label: string }[] = [
-  { route: 'home', label: 'Home' },
-  { route: 'persone', label: 'Persone' },
-  { route: 'profilo', label: 'Profilo' },
-  { route: 'impostazioni', label: 'Impostazioni' },
-  { route: 'faq', label: 'FAQ' },
+const LINKS: readonly { route: Route; label: MessageKey }[] = [
+  { route: 'home', label: 'nav.home' },
+  { route: 'persone', label: 'nav.people' },
+  { route: 'profilo', label: 'nav.profile' },
+  { route: 'impostazioni', label: 'nav.settings' },
+  { route: 'faq', label: 'nav.faq' },
 ]
 
 export function AppShell({ route, children }: { route: Route; children: ReactNode }) {
+  const { t } = useI18n()
   const mainRef = useRef<HTMLElement>(null)
   const first = useRef(true)
 
@@ -34,19 +37,19 @@ export function AppShell({ route, children }: { route: Route; children: ReactNod
           mainRef.current?.focus()
         }}
       >
-        Vai al contenuto
+        {t('nav.skip')}
       </a>
       <header className="app-header">
         <p className="brand">
           <img src="/favicon.svg" alt="" width="32" height="32" />
           Turni
         </p>
-        <nav aria-label="Principale">
+        <nav aria-label={t('nav.label')}>
           <ul>
             {LINKS.map(({ route: r, label }) => (
               <li key={r}>
                 <a href={r === 'home' ? '#/' : `#/${r}`} aria-current={r === route ? 'page' : undefined}>
-                  {label}
+                  {t(label)}
                 </a>
               </li>
             ))}
