@@ -109,7 +109,7 @@ export function HomePage({ source, now }: { source: DataSource; now: Date }) {
         )}
       </section>
 
-      <section aria-labelledby="mese">
+      <section className="home-month" aria-labelledby="mese">
         <h2 id="mese">{t('home.month')}</h2>
         <p className="hint">{t('home.monthHint')}</p>
         <MiniMonth
