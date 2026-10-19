@@ -1,0 +1,46 @@
+{
+  "model": "opusplan",
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(npm run:*)",
+      "Bash(npm test:*)",
+      "Bash(npx vite:*)",
+      "Bash(npx vitest:*)",
+      "Bash(npx tsc:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Edit(src/**)",
+      "Edit(public/**)",
+      "Edit(supabase/**)",
+      "Edit(00-istruzioni-progetto/**)",
+      "Edit(.claude/agent-memory-local/**)",
+      "WebSearch",
+      "WebFetch(domain:supabase.com)",
+      "WebFetch(domain:vite.dev)",
+      "WebFetch(domain:react.dev)",
+      "WebFetch(domain:developer.mozilla.org)",
+      "WebFetch(domain:webkit.org)",
+      "WebFetch(domain:developer.apple.com)",
+      "WebFetch(domain:code.claude.com)"
+    ],
+    "ask": [
+      "Bash(git push:*)",
+      "Bash(gh repo create:*)",
+      "Bash(gh pr create:*)",
+      "Bash(npx supabase link:*)",
+      "Bash(npx supabase db push:*)",
+      "Bash(npx supabase functions deploy:*)",
+      "Bash(npx vercel:*)"
+    ],
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Edit(./.env)",
+      "Edit(./.env.*)"
+    ]
+  }
+}
