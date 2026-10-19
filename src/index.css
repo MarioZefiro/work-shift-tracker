@@ -249,3 +249,65 @@ main {
     background-position: -200% 0;
   }
 }
+
+/* People, profile, settings, FAQ */
+.page h1 {
+  font-size: 1.4rem;
+  margin: 0 0 1rem;
+}
+
+.people {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.people li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  background: var(--surface);
+  border-radius: 0.5rem;
+  padding: 0.6rem 0.9rem;
+}
+
+.people .role {
+  font-size: 0.875rem;
+}
+
+.facts {
+  margin: 0 0 1rem;
+}
+
+.facts dt {
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+}
+
+.facts dd {
+  margin: 0;
+  font-weight: 700;
+}
+
+.faq {
+  background: var(--surface);
+  border-radius: 0.5rem;
+  padding: 0.6rem 0.9rem;
+  margin-bottom: 0.4rem;
+}
+
+.faq summary {
+  cursor: pointer;
+  font-weight: 600;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+
+.faq summary:focus-visible,
+.button:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
