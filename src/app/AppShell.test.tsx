@@ -46,6 +46,18 @@ test('useRoute reads the invite code from #/invite/<code>', () => {
   expect(renderHook(() => useRoute()).result.current).toEqual({ name: 'invite', params: ['abc123'] })
 })
 
+test('the Gestione link only shows when asked to', () => {
+  const { rerender } = renderWithI18n(<AppShell route="home">x</AppShell>)
+  expect(screen.queryByRole('link', { name: 'Gestione' })).not.toBeInTheDocument()
+  rerender(
+    <AppShell route="manage" showManage>
+      x
+    </AppShell>,
+  )
+  expect(screen.getByRole('link', { name: 'Gestione' })).toHaveAttribute('href', '#/manage')
+  expect(screen.getByRole('link', { name: 'Gestione' })).toHaveAttribute('aria-current', 'page')
+})
+
 test('moves focus to the main region when the route changes', () => {
   const { rerender } = renderWithI18n(<AppShell route="home">x</AppShell>)
   const main = screen.getByRole('main')

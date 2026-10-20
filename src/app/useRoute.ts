@@ -1,8 +1,8 @@
 import { useMemo, useSyncExternalStore } from 'react'
 
-export type Route = 'home' | 'people' | 'profile' | 'settings' | 'faq' | 'invite'
+export type Route = 'home' | 'people' | 'profile' | 'settings' | 'faq' | 'invite' | 'manage'
 
-const ROUTES: readonly Route[] = ['home', 'people', 'profile', 'settings', 'faq', 'invite']
+const ROUTES: readonly Route[] = ['home', 'people', 'profile', 'settings', 'faq', 'invite', 'manage']
 
 function subscribe(onChange: () => void): () => void {
   window.addEventListener('hashchange', onChange)

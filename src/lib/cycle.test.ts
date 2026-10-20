@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { DEFAULT_SHIFT_TYPES, generateCycle } from './cycle'
+import { DEFAULT_SHIFT_TYPES, buildShift, generateCycle } from './cycle'
 import { NonexistentLocalTimeError } from './time'
 
 const base = {
@@ -54,5 +54,33 @@ describe('generateCycle', () => {
 
   it('rejects an empty pattern', () => {
     expect(() => generateCycle({ ...opts, pattern: [] })).toThrow(RangeError)
+  })
+})
+
+describe('buildShift', () => {
+  it('gives the night of 24 October 2026 in Rome 480 real minutes, with the clocks going back that night', () => {
+    const shift = buildShift('u1', 'N', '2026-10-24', 'Europe/Rome', DEFAULT_SHIFT_TYPES)
+    expect(shift).toEqual({
+      id: 'u1:2026-10-24',
+      userId: 'u1',
+      code: 'N',
+      startsAt: '2026-10-24T20:00:00.000Z',
+      endsAt: '2026-10-25T04:00:00.000Z',
+    })
+    expect((Date.parse(shift.endsAt) - Date.parse(shift.startsAt)) / 60_000).toBe(480)
+  })
+
+  it('makes rest cover the whole local day, 25 hours when the clocks go back', () => {
+    const shift = buildShift('u1', 'R', '2026-10-25', 'Europe/Rome', DEFAULT_SHIFT_TYPES)
+    expect((Date.parse(shift.endsAt) - Date.parse(shift.startsAt)) / 3_600_000).toBe(25)
+  })
+
+  it('rejects a code the group has no type for', () => {
+    expect(() => buildShift('u1', 'N', '2026-10-24', 'Europe/Rome', [])).toThrow(RangeError)
+  })
+
+  it('is what generateCycle builds each day from', () => {
+    const [first] = generateCycle({ ...base, pattern: ['N'], startDate: '2026-10-24', weeks: 1, timeZone: 'Europe/Rome', types: DEFAULT_SHIFT_TYPES })
+    expect(first).toEqual(buildShift(base.userId, 'N', '2026-10-24', 'Europe/Rome', DEFAULT_SHIFT_TYPES))
   })
 })

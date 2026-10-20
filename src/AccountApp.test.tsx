@@ -5,6 +5,7 @@ import { AccountApp } from './AccountApp'
 import { acceptInvite, createGroup, createInvite, listMyGroups, previewInvite } from './data/supabase/groups'
 import { readPendingInvite, rememberInvite } from './data/supabase/pendingInvite'
 import { profileExists, saveProfile } from './data/supabase/profile'
+import { assignShift } from './data/supabase/shiftsAdmin'
 import { createSupabaseSource } from './data/supabase/supabaseSource'
 import { renderWithI18n } from './i18n/test-utils'
 import { makeSource } from './test-utils'
@@ -17,6 +18,11 @@ vi.mock('./data/supabase/groups', async (original) => ({
   createInvite: vi.fn(),
   previewInvite: vi.fn(),
   acceptInvite: vi.fn(),
+}))
+vi.mock('./data/supabase/shiftsAdmin', async (original) => ({
+  ...(await original<typeof import('./data/supabase/shiftsAdmin')>()),
+  assignShift: vi.fn(),
+  deleteShift: vi.fn(),
 }))
 vi.mock('./data/supabase/supabaseSource', () => ({ createSupabaseSource: vi.fn() }))
 
@@ -140,4 +146,32 @@ test('a failed groups load can be retried', async () => {
   show()
   fireEvent.click(await screen.findByRole('button', { name: 'Riprova' }))
   expect(await screen.findByRole('button', { name: 'Reparto' })).toBeInTheDocument()
+})
+
+test('the manager of the group gets Gestione and assigns a shift for that group', async () => {
+  vi.mocked(assignShift).mockResolvedValue(undefined)
+  show()
+  fireEvent.click(await screen.findByRole('button', { name: 'Reparto' }))
+  expect(await screen.findByRole('link', { name: 'Gestione' })).toBeInTheDocument()
+  window.location.hash = '#/manage'
+  fireEvent.change(await screen.findByLabelText('Data'), { target: { value: '2026-10-24' } })
+  fireEvent.click(screen.getByRole('button', { name: 'Assegna turno' }))
+  await waitFor(() =>
+    expect(assignShift).toHaveBeenCalledWith(
+      client,
+      'g1',
+      expect.objectContaining({ userId: 'me', code: 'M', startsAt: '2026-10-24T04:00:00.000Z' }),
+    ),
+  )
+})
+
+test('a plain member has no Gestione link, and the page tells them why if they open it', async () => {
+  vi.mocked(listMyGroups).mockResolvedValue([{ ...groupA, role: 'member' }])
+  show()
+  fireEvent.click(await screen.findByRole('button', { name: 'Reparto' }))
+  await screen.findByRole('navigation')
+  expect(screen.queryByRole('link', { name: 'Gestione' })).not.toBeInTheDocument()
+  window.location.hash = '#/manage'
+  expect(await screen.findByText(/Solo il responsabile/)).toBeInTheDocument()
+  expect(assignShift).not.toHaveBeenCalled()
 })

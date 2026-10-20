@@ -11,7 +11,19 @@ const LINKS: readonly { route: Route; label: MessageKey }[] = [
   { route: 'faq', label: 'nav.faq' },
 ]
 
-export function AppShell({ route, focusOnMount = false, children }: { route: Route; focusOnMount?: boolean; children: ReactNode }) {
+const MANAGE_LINK: { route: Route; label: MessageKey } = { route: 'manage', label: 'nav.manage' }
+
+export function AppShell({
+  route,
+  focusOnMount = false,
+  showManage = false,
+  children,
+}: {
+  route: Route
+  focusOnMount?: boolean
+  showManage?: boolean
+  children: ReactNode
+}) {
   const { t } = useI18n()
   const mainRef = useRef<HTMLElement>(null)
   const shownRoute = useRef<Route | null>(null)
@@ -44,7 +56,7 @@ export function AppShell({ route, focusOnMount = false, children }: { route: Rou
         </p>
         <nav aria-label={t('nav.label')}>
           <ul>
-            {LINKS.map(({ route: r, label }) => (
+            {(showManage ? [...LINKS, MANAGE_LINK] : LINKS).map(({ route: r, label }) => (
               <li key={r}>
                 <a href={r === 'home' ? '#/' : `#/${r}`} aria-current={r === route ? 'page' : undefined}>
                   {t(label)}
