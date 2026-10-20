@@ -16,12 +16,24 @@ export function todayView(a: {
 }): { today: string; mine: Shift | null; colleagues: Member[]; upcoming: Shift[] } {
   const today = localDateIn(a.now, a.timeZone)
   const dateOf = (s: Shift) => localDateIn(new Date(s.startsAt), a.timeZone)
-  const mine = a.shifts.find((s) => s.userId === a.userId && dateOf(s) === today) ?? null
+  const nowMs = a.now.getTime()
+  const mineShifts = a.shifts.filter((s) => s.userId === a.userId)
+  // A shift in progress wins over the date match: nights cross local midnight.
+  const mine =
+    mineShifts.find((s) => Date.parse(s.startsAt) <= nowMs && nowMs < Date.parse(s.endsAt)) ??
+    mineShifts.find((s) => dateOf(s) === today) ??
+    null
 
   const colleagueIds = new Set(
     mine && mine.code !== 'R'
       ? a.shifts
-          .filter((s) => s.userId !== a.userId && s.code === mine.code && dateOf(s) === today)
+          .filter(
+            (s) =>
+              s.userId !== a.userId &&
+              s.code === mine.code &&
+              Date.parse(s.startsAt) <= Date.parse(mine.startsAt) &&
+              Date.parse(mine.startsAt) < Date.parse(s.endsAt),
+          )
           .map((s) => s.userId)
       : [],
   )

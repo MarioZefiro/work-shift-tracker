@@ -32,6 +32,20 @@ describe('todayView', () => {
     expect(v.upcoming.map((s) => s.id)).toEqual(['3', '4'])
   })
 
+  it('keeps a night shift in progress after local midnight', () => {
+    const night = (id: string, userId: string): Shift => ({
+      id,
+      userId,
+      code: 'N',
+      startsAt: '2026-03-28T21:00:00Z',
+      endsAt: '2026-03-29T05:00:00Z',
+    })
+    const shifts = [night('1', 'me'), night('2', 'anna'), shift('3', 'me', 'R', '2026-03-29')]
+    const v = todayView({ now: new Date('2026-03-29T00:00:00Z'), timeZone: TZ, userId: 'me', shifts, members })
+    expect(v.mine?.code).toBe('N')
+    expect(v.colleagues).toEqual([members[1]])
+  })
+
   it('has no colleagues when today is a rest day', () => {
     const shifts = [shift('1', 'me', 'R', '2026-10-19'), shift('2', 'anna', 'R', '2026-10-19')]
     expect(todayView({ now, timeZone: TZ, userId: 'me', shifts, members }).colleagues).toEqual([])
