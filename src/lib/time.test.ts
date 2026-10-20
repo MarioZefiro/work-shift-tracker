@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   AmbiguousLocalTimeError,
   NonexistentLocalTimeError,
+  addDays,
   localDateIn,
   zonedToUtc,
 } from './time'
@@ -46,5 +47,10 @@ describe('time', () => {
     ['2026-10-25', '03:00', '2026-10-25T02:00:00.000Z'],
   ])('converts %s %s next to a DST change', (date, time, utc) => {
     expect(zonedToUtc(date, time, 'Europe/Rome').toISOString()).toBe(utc)
+  })
+
+  it('addDays works on calendar days across a DST change and month end', () => {
+    expect(addDays('2026-10-24', 2)).toBe('2026-10-26')
+    expect(addDays('2026-03-01', -1)).toBe('2026-02-28')
   })
 })

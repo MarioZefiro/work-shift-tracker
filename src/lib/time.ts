@@ -55,3 +55,9 @@ export function localDateIn(instant: Date, timeZone: string): string {
   const p = wallClock(instant, timeZone)
   return `${p.year}-${p.month}-${p.day}`
 }
+
+// Calendar arithmetic on date strings: adding 24h in ms breaks on DST days.
+export function addDays(date: string, days: number): string {
+  const [y, m, d] = date.split('-').map(Number)
+  return new Date(Date.UTC(y, m - 1, d + days)).toISOString().slice(0, 10)
+}

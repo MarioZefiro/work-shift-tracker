@@ -1,5 +1,5 @@
 import type { Shift, ShiftCode, ShiftType } from './types'
-import { zonedToUtc } from './time'
+import { addDays, zonedToUtc } from './time'
 
 export const DEFAULT_SHIFT_TYPES: ShiftType[] = [
   { code: 'M', label: 'Mattina', startTime: '06:00', durationMinutes: 480 },
@@ -7,12 +7,6 @@ export const DEFAULT_SHIFT_TYPES: ShiftType[] = [
   { code: 'N', label: 'Notte', startTime: '22:00', durationMinutes: 480 },
   { code: 'R', label: 'Riposo', startTime: '00:00', durationMinutes: 1440 },
 ]
-
-// Calendar arithmetic on the date string: adding 24h of milliseconds breaks on DST days.
-function addDays(date: string, days: number): string {
-  const [y, m, d] = date.split('-').map(Number)
-  return new Date(Date.UTC(y, m - 1, d + days)).toISOString().slice(0, 10)
-}
 
 export function generateCycle(opts: {
   userId: string

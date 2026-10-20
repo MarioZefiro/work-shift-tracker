@@ -1,11 +1,5 @@
-import { localDateIn } from './time'
+import { addDays, localDateIn } from './time'
 import type { Member, Shift } from './types'
-
-// Calendar arithmetic on date strings: adding 24h in ms breaks on DST days.
-function addDays(date: string, days: number): string {
-  const [y, m, d] = date.split('-').map(Number)
-  return new Date(Date.UTC(y, m - 1, d + days)).toISOString().slice(0, 10)
-}
 
 export function todayView(a: {
   now: Date

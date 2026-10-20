@@ -1,5 +1,5 @@
 import { DEFAULT_SHIFT_TYPES, generateCycle } from '../lib/cycle'
-import { localDateIn } from '../lib/time'
+import { addDays, localDateIn } from '../lib/time'
 import type { Group, Member, ShiftCode } from '../lib/types'
 import type { DataSource } from './DataSource'
 
@@ -18,9 +18,8 @@ const MEMBERS: Member[] = [
 ]
 
 function mondayOf(date: string): string {
-  const [y, m, d] = date.split('-').map(Number)
-  const back = (new Date(Date.UTC(y, m - 1, d)).getUTCDay() + 6) % 7
-  return new Date(Date.UTC(y, m - 1, d - back)).toISOString().slice(0, 10)
+  const back = (new Date(`${date}T00:00:00Z`).getUTCDay() + 6) % 7
+  return addDays(date, -back)
 }
 
 export function createDemoSource(now: Date): DataSource {
