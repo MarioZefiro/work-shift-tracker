@@ -41,3 +41,13 @@ test('shows an alert when the link cannot be sent, and lets the user retry', asy
   await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent('Controlla la tua email'))
   expect(screen.queryByRole('alert')).not.toBeInTheDocument()
 })
+
+test('offers a way back only when it is given one', () => {
+  const onBack = vi.fn()
+  const { unmount } = renderWithI18n(<LoginPage onSubmit={vi.fn()} />)
+  expect(screen.queryByRole('button', { name: 'Indietro' })).not.toBeInTheDocument()
+  unmount()
+  renderWithI18n(<LoginPage onSubmit={vi.fn()} onBack={onBack} />)
+  fireEvent.click(screen.getByRole('button', { name: 'Indietro' }))
+  expect(onBack).toHaveBeenCalledOnce()
+})

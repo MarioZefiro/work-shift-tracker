@@ -1,13 +1,22 @@
 import { useI18n } from '../i18n/I18nContext'
 import { LanguageSelect } from '../i18n/LanguageSelect'
+import type { MessageKey } from '../i18n/messages/it'
 import type { DataSource } from '../data/DataSource'
 import { GroupGate } from './GroupGate'
 
-export function SettingsPage({ source, onLeave }: { source: DataSource; onLeave: () => void }) {
+export function SettingsPage({
+  source,
+  onLeave,
+  leaveKey = 'settings.leave',
+}: {
+  source: DataSource
+  onLeave: () => void
+  leaveKey?: MessageKey
+}) {
   const { t } = useI18n()
   const leave = (
     <button type="button" className="button" onClick={onLeave}>
-      {t('settings.leave')}
+      {t(leaveKey)}
     </button>
   )
   return (

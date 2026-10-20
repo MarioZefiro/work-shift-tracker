@@ -4,7 +4,7 @@ import { LanguageSelect } from '../i18n/LanguageSelect'
 
 type Status = 'idle' | 'sending' | 'sent' | 'error'
 
-export function LoginPage({ onSubmit }: { onSubmit: (email: string) => Promise<void> }) {
+export function LoginPage({ onSubmit, onBack }: { onSubmit: (email: string) => Promise<void>; onBack?: () => void }) {
   const { t } = useI18n()
   const emailId = useId()
   const [email, setEmail] = useState('')
@@ -36,6 +36,11 @@ export function LoginPage({ onSubmit }: { onSubmit: (email: string) => Promise<v
       <p role="status">{status === 'sent' ? t('auth.login.sent') : ''}</p>
       {status === 'error' && <p role="alert">{t('auth.login.error')}</p>}
       <LanguageSelect />
+      {onBack && (
+        <button type="button" className="button button-secondary" onClick={onBack}>
+          {t('auth.login.back')}
+        </button>
+      )}
     </main>
   )
 }

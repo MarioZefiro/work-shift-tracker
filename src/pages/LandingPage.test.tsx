@@ -13,3 +13,13 @@ test('LandingPage shows the demo notice and the start button', () => {
   fireEvent.click(screen.getByRole('button', { name: 'Prova la demo' }))
   expect(onStart).toHaveBeenCalledOnce()
 })
+
+test('LandingPage offers sign-in only when it is given a handler', () => {
+  const onLogin = vi.fn()
+  const { unmount } = renderWithI18n(<LandingPage onStart={vi.fn()} />)
+  expect(screen.queryByRole('button', { name: 'Accedi' })).not.toBeInTheDocument()
+  unmount()
+  renderWithI18n(<LandingPage onStart={vi.fn()} onLogin={onLogin} />)
+  fireEvent.click(screen.getByRole('button', { name: 'Accedi' }))
+  expect(onLogin).toHaveBeenCalledOnce()
+})

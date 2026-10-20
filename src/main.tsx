@@ -3,13 +3,14 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
 import { ErrorBoundary } from './app/ErrorBoundary'
+import { tryGetSupabase } from './data/supabase/instance'
 import { I18nProvider } from './i18n/I18nProvider'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ErrorBoundary>
       <I18nProvider>
-        <App />
+        <App client={tryGetSupabase()} />
       </I18nProvider>
     </ErrorBoundary>
   </StrictMode>,

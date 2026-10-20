@@ -11,3 +11,8 @@ export function getSupabase(): SupabaseClient {
   })
   return client
 }
+
+// null when the variables are absent, so the app starts with the demo only instead of failing.
+export function tryGetSupabase(): SupabaseClient | null {
+  return import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ? getSupabase() : null
+}

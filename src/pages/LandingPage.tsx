@@ -2,7 +2,15 @@ import { useEffect, useRef } from 'react'
 import { useI18n } from '../i18n/I18nContext'
 import { LanguageSelect } from '../i18n/LanguageSelect'
 
-export function LandingPage({ onStart, focusHeading = false }: { onStart: () => void; focusHeading?: boolean }) {
+export function LandingPage({
+  onStart,
+  onLogin,
+  focusHeading = false,
+}: {
+  onStart: () => void
+  onLogin?: () => void
+  focusHeading?: boolean
+}) {
   const { t } = useI18n()
   const headingRef = useRef<HTMLHeadingElement>(null)
   // Only after leaving the demo: the focused button just unmounted, and at first load focus must stay put.
@@ -23,6 +31,11 @@ export function LandingPage({ onStart, focusHeading = false }: { onStart: () => 
       <button type="button" className="button" onClick={onStart}>
         {t('landing.start')}
       </button>
+      {onLogin && (
+        <button type="button" className="button button-secondary" onClick={onLogin}>
+          {t('landing.login')}
+        </button>
+      )}
     </main>
   )
 }
