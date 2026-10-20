@@ -120,3 +120,12 @@ test('ignores a superseded load that resolves last', async () => {
   await new Promise((r) => setTimeout(r, 0))
   expect(screen.getByText('Oggi riposi')).toBeInTheDocument()
 })
+
+test('falls back to the shift code when the group lacks that shift type', async () => {
+  const s: DataSource = {
+    ...source(base),
+    group: () => Promise.resolve({ ...group, shiftTypes: group.shiftTypes.filter((t) => t.code !== 'M') }),
+  }
+  renderWithI18n(<HomePage source={s} now={NOW} />)
+  expect(await screen.findByText(/Mar 20 ottobre · M$/)).toBeInTheDocument()
+})

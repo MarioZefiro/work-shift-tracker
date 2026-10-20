@@ -4,7 +4,7 @@ import { useI18n } from '../i18n/I18nContext'
 import { formatShift } from '../lib/format'
 import { todayView, workingCountByDate } from '../lib/home'
 import { localDateIn } from '../lib/time'
-import type { Group, Shift, ShiftType } from '../lib/types'
+import type { Group, Shift } from '../lib/types'
 import { MiniMonth } from './MiniMonth'
 
 type State =
@@ -70,10 +70,11 @@ export function HomePage({ source, now }: { source: DataSource; now: Date }) {
 
   const { group, shifts } = state
   // Labels come from the dictionary; the group's stored label is only the Italian default.
-  const typeOf = (code: Shift['code']): ShiftType => ({
-    ...group.shiftTypes.find((s) => s.code === code)!,
-    label: t(`shift.${code}`),
-  })
+  const describe = (s: Shift): string => {
+    const type = group.shiftTypes.find((x) => x.code === s.code)
+    // A group may lack a type; show the bare code rather than crash.
+    return type ? formatShift(s, { ...type, label: t(`shift.${s.code}`) }, group.timeZone) : s.code
+  }
   const dayFmt = (opts: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat(locale, { timeZone: 'UTC', ...opts })
   const { today, mine, colleagues, upcoming } = todayView({
     now,
@@ -95,7 +96,7 @@ export function HomePage({ source, now }: { source: DataSource; now: Date }) {
           <p>{t('home.rest')}</p>
         ) : (
           <>
-            <p className="big">{t('home.mine', { shift: formatShift(mine, typeOf(mine.code), group.timeZone) })}</p>
+            <p className="big">{t('home.mine', { shift: describe(mine) })}</p>
             {colleagues.length > 0 && <p>{t('home.withYou', { names: list(colleagues.map((c) => c.name)) })}</p>}
           </>
         )}
@@ -109,7 +110,7 @@ export function HomePage({ source, now }: { source: DataSource; now: Date }) {
           <ul className="upcoming" aria-label={t('home.upcomingList')}>
             {upcoming.map((s) => (
               <li key={s.id} data-code={s.code}>
-                {cap(dayFmt({ weekday: 'short', day: 'numeric', month: 'long' }).format(asUtc(dateOf(s))))} · {formatShift(s, typeOf(s.code), group.timeZone)}
+                {cap(dayFmt({ weekday: 'short', day: 'numeric', month: 'long' }).format(asUtc(dateOf(s))))} · {describe(s)}
               </li>
             ))}
           </ul>
