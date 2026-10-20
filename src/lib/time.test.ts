@@ -26,4 +26,16 @@ describe('time', () => {
   it('localDateIn uses the given zone', () => {
     expect(localDateIn(new Date('2026-10-19T23:30:00Z'), 'Europe/Rome')).toBe('2026-10-20')
   })
+
+  it.each([
+    ['2026-02-30', '10:00'],
+    ['2026-13-01', '10:00'],
+    ['2026-1-5', '10:00'],
+    ['', '10:00'],
+    ['2026-03-10', '25:99'],
+    ['2026-03-10', '24:00'],
+    ['2026-03-10', ''],
+  ])('rejects invalid input %j %j', (date, time) => {
+    expect(() => zonedToUtc(date, time, 'Europe/Rome')).toThrow(RangeError)
+  })
 })

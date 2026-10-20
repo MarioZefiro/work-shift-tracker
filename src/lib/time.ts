@@ -32,6 +32,11 @@ export function zonedToUtc(date: string, time: string, timeZone: string): Date {
   const [y, mo, d] = date.split('-').map(Number)
   const [h, mi] = time.split(':').map(Number)
   const wall = Date.UTC(y, mo - 1, d, h, mi)
+  // Date.UTC rolls over (Feb 30 -> Mar 2), so only a round trip proves the input was real.
+  const iso = new Date(wall).toISOString()
+  if (iso.slice(0, 10) !== date || iso.slice(11, 16) !== time) {
+    throw new RangeError(`invalid date or time: "${date}" "${time}"`)
+  }
 
   // Offsets a day either side bracket any single DST transition near `wall`.
   const candidates = new Set<number>()
