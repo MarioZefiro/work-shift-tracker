@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, screen, within } from '@testing-library/react'
+import { cleanup, fireEvent, screen, waitFor, within } from '@testing-library/react'
 import { afterEach, expect, test } from 'vitest'
 import type { DataSource } from '../data/DataSource'
 import { DEFAULT_SHIFT_TYPES } from '../lib/cycle'
@@ -102,4 +102,21 @@ test('the mini month is a table with a caption and labelled days', async () => {
   const table = await screen.findByRole('table', { name: 'ottobre 2026' })
   expect(within(table).getByLabelText('19 ottobre, 2 in servizio')).toBeInTheDocument()
   expect(within(table).getByLabelText('20 ottobre, 1 in servizio')).toBeInTheDocument()
+})
+
+test('ignores a superseded load that resolves last', async () => {
+  const resolvers: ((s: Shift[]) => void)[] = []
+  const s: DataSource = {
+    ...source([]),
+    shifts: () => new Promise<Shift[]>((res) => resolvers.push(res)),
+  }
+  const { rerender } = renderWithI18n(<HomePage source={s} now={NOW} />)
+  await waitFor(() => expect(resolvers).toHaveLength(1))
+  rerender(<HomePage source={s} now={new Date(NOW)} />)
+  await waitFor(() => expect(resolvers).toHaveLength(2))
+  resolvers[1]([shift('me', 19, 'R')])
+  expect(await screen.findByText('Oggi riposi')).toBeInTheDocument()
+  resolvers[0]([shift('me', 19, 'M')])
+  await new Promise((r) => setTimeout(r, 0))
+  expect(screen.getByText('Oggi riposi')).toBeInTheDocument()
 })

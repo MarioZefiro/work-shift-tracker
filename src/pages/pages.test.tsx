@@ -74,3 +74,18 @@ test('FaqPage uses native details/summary and opens with the keyboard', () => {
   expect(summary.parentElement!.hasAttribute('open')).toBe(true)
   expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1)
 })
+
+test('GroupGate ignores a superseded response that resolves last', async () => {
+  const resolvers: ((g: Group) => void)[] = []
+  const slow: DataSource = { ...makeSource(few), group: () => new Promise<Group>((res) => resolvers.push(res)) }
+  const fresh = { ...slow }
+  const g = (name: string): Group => ({ id: 'g', name: 'G', timeZone: 'Europe/Rome', members: [{ id: 'x', name, role: 'member' }], shiftTypes: DEFAULT_SHIFT_TYPES })
+  const { rerender } = renderWithI18n(<PeoplePage source={slow} />)
+  rerender(<PeoplePage source={fresh} />)
+  await waitFor(() => expect(resolvers).toHaveLength(2))
+  resolvers[1](g('Nuova'))
+  await screen.findByText('Nuova')
+  resolvers[0](g('Vecchia'))
+  await new Promise((r) => setTimeout(r, 0))
+  expect(screen.queryByText('Vecchia')).toBeNull()
+})

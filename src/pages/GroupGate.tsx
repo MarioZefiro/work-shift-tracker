@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { useI18n } from '../i18n/I18nContext'
 import type { DataSource } from '../data/DataSource'
 import type { Group } from '../lib/types'
@@ -10,15 +10,24 @@ export function GroupGate({ source, children }: { source: DataSource; children: 
   const { t } = useI18n()
   const [state, setState] = useState<State>({ status: 'loading' })
 
-  const load = useCallback(() => {
+  const [attempt, setAttempt] = useState(0)
+
+  useEffect(() => {
+    // Ignore a response that was superseded by a retry, a new source or unmount.
+    let cancelled = false
     setState({ status: 'loading' })
     source
       .group()
-      .then((group) => setState({ status: 'ready', group }))
-      .catch(() => setState({ status: 'error' }))
-  }, [source])
-
-  useEffect(load, [load])
+      .then((group) => {
+        if (!cancelled) setState({ status: 'ready', group })
+      })
+      .catch(() => {
+        if (!cancelled) setState({ status: 'error' })
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [source, attempt])
 
   if (state.status === 'loading') {
     return (
@@ -33,7 +42,7 @@ export function GroupGate({ source, children }: { source: DataSource; children: 
     return (
       <div role="alert" className="card">
         <p>{t('error.group')}</p>
-        <button type="button" className="button" onClick={load}>
+        <button type="button" className="button" onClick={() => setAttempt((n) => n + 1)}>
           {t('state.retry')}
         </button>
       </div>

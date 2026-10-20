@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { DataSource } from '../data/DataSource'
 import { useI18n } from '../i18n/I18nContext'
 import { formatShift } from '../lib/format'
@@ -20,7 +20,11 @@ export function HomePage({ source, now }: { source: DataSource; now: Date }) {
   const { locale, t, list } = useI18n()
   const [state, setState] = useState<State>({ status: 'loading' })
 
-  const load = useCallback(() => {
+  const [attempt, setAttempt] = useState(0)
+
+  useEffect(() => {
+    // A later load (new source/now or retry) or unmount must win over this one.
+    let cancelled = false
     setState({ status: 'loading' })
     source
       .group()
@@ -33,12 +37,15 @@ export function HomePage({ source, now }: { source: DataSource; now: Date }) {
         const last = new Date(Date.UTC(y, m, 3))
         const to = `${last.getUTCFullYear()}-${pad(last.getUTCMonth() + 1)}-${pad(last.getUTCDate())}`
         const shifts = await source.shifts({ from: `${y}-${pad(m)}-01`, to })
-        setState({ status: 'ready', group, shifts })
+        if (!cancelled) setState({ status: 'ready', group, shifts })
       })
-      .catch(() => setState({ status: 'error' }))
-  }, [source, now])
-
-  useEffect(load, [load])
+      .catch(() => {
+        if (!cancelled) setState({ status: 'error' })
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [source, now, attempt])
 
   if (state.status === 'loading') {
     return (
@@ -54,7 +61,7 @@ export function HomePage({ source, now }: { source: DataSource; now: Date }) {
     return (
       <div role="alert" className="card">
         <p>{t('error.shifts')}</p>
-        <button type="button" className="button" onClick={load}>
+        <button type="button" className="button" onClick={() => setAttempt((n) => n + 1)}>
           {t('state.retry')}
         </button>
       </div>
