@@ -11,20 +11,18 @@ const LINKS: readonly { route: Route; label: MessageKey }[] = [
   { route: 'faq', label: 'nav.faq' },
 ]
 
-export function AppShell({ route, children }: { route: Route; children: ReactNode }) {
+export function AppShell({ route, focusOnMount = false, children }: { route: Route; focusOnMount?: boolean; children: ReactNode }) {
   const { t } = useI18n()
   const mainRef = useRef<HTMLElement>(null)
-  const first = useRef(true)
+  const shownRoute = useRef<Route | null>(null)
 
-  // Move focus on navigation so keyboard and screen reader users land on the new page;
-  // skipped on first render to avoid stealing focus at load.
+  // Move focus on navigation so keyboard and screen reader users land on the new page.
+  // Comparing with the last route (not a "first run" flag) keeps StrictMode's double effect harmless.
   useEffect(() => {
-    if (first.current) {
-      first.current = false
-      return
-    }
-    mainRef.current?.focus()
-  }, [route])
+    const changed = shownRoute.current === null ? focusOnMount : shownRoute.current !== route
+    shownRoute.current = route
+    if (changed) mainRef.current?.focus()
+  }, [route, focusOnMount])
 
   return (
     <>

@@ -1,4 +1,5 @@
 import { cleanup, renderHook, screen } from '@testing-library/react'
+import { StrictMode } from 'react'
 import { afterEach, expect, test } from 'vitest'
 import { AppShell } from './AppShell'
 import { useRoute } from './useRoute'
@@ -41,4 +42,22 @@ test('moves focus to the main region when the route changes', () => {
   expect(main).not.toHaveFocus()
   rerender(<AppShell route="faq">x</AppShell>)
   expect(main).toHaveFocus()
+})
+
+test('focuses main on mount only when asked, and survives StrictMode', () => {
+  renderWithI18n(
+    <StrictMode>
+      <AppShell route="home">x</AppShell>
+    </StrictMode>,
+  )
+  expect(screen.getByRole('main')).not.toHaveFocus()
+  cleanup()
+  renderWithI18n(
+    <StrictMode>
+      <AppShell route="home" focusOnMount>
+        x
+      </AppShell>
+    </StrictMode>,
+  )
+  expect(screen.getByRole('main')).toHaveFocus()
 })
