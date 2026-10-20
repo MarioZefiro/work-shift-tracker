@@ -3,6 +3,8 @@ import { defineConfig } from 'vitest/config'
 
 // https://vite.dev/config/
 export default defineConfig({
+  // GitHub Pages serves the project site under /<repo>/.
+  base: '/work-shift-tracker/',
   plugins: [react()],
   test: {
     environment: 'jsdom',
