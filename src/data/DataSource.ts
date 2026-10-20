@@ -1,6 +1,6 @@
 import type { Group, Shift } from '../lib/types'
 
-// A source is bound to one group; write methods will be added as new methods later.
+// A source is bound to one group. Read-only because Piano 1 screens never write.
 export interface DataSource {
   readonly userId: string
   group(): Promise<Group>
