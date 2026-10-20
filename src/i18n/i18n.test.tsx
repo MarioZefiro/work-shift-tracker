@@ -36,12 +36,12 @@ test('a stored choice wins over the browser languages', () => {
 })
 
 test('falls back to the first supported browser language by primary subtag', () => {
-  vi.spyOn(navigator, 'languages', 'get').mockReturnValue(['de', 'fr-CA', 'en'])
+  vi.spyOn(navigator, 'languages', 'get').mockReturnValue(['pt', 'fr-CA', 'en'])
   expect(resolveLocale()).toBe('fr')
 })
 
 test('falls back to Italian for unsupported languages', () => {
-  vi.spyOn(navigator, 'languages', 'get').mockReturnValue(['de', 'ja'])
+  vi.spyOn(navigator, 'languages', 'get').mockReturnValue(['pt', 'ja'])
   expect(resolveLocale()).toBe('it')
 })
 
@@ -92,6 +92,7 @@ test('selector options carry endonym and lang', () => {
     ['English', 'en'],
     ['Français', 'fr'],
     ['Español', 'es'],
+    ['Deutsch', 'de'],
   ])
 })
 

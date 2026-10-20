@@ -1,3 +1,4 @@
+import { de } from './messages/de'
 import { en } from './messages/en'
 import { es } from './messages/es'
 import { fr } from './messages/fr'
@@ -9,6 +10,7 @@ export const LOCALES = [
   { code: 'en', name: 'English', messages: en },
   { code: 'fr', name: 'Français', messages: fr },
   { code: 'es', name: 'Español', messages: es },
+  { code: 'de', name: 'Deutsch', messages: de },
 ] as const
 
 export type Locale = (typeof LOCALES)[number]['code']
