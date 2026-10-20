@@ -1,5 +1,6 @@
 import type { Group, Shift } from '../lib/types'
 
+// A source is bound to one group; write methods will be added as new methods later.
 export interface DataSource {
   readonly userId: string
   group(): Promise<Group>

@@ -1,8 +1,8 @@
 import { cleanup, fireEvent, screen, waitFor, within } from '@testing-library/react'
 import { afterEach, expect, test } from 'vitest'
 import type { DataSource } from '../data/DataSource'
-import { DEFAULT_SHIFT_TYPES } from '../lib/cycle'
-import type { Group, Shift, ShiftCode } from '../lib/types'
+import type { Shift, ShiftCode } from '../lib/types'
+import { makeSource, testGroup } from '../test-utils'
 import { HomePage } from './HomePage'
 import { renderWithI18n } from '../i18n/test-utils'
 
@@ -10,17 +10,7 @@ afterEach(cleanup)
 
 // 2026-10-19 08:00 in Rome (CEST, UTC+2).
 const NOW = new Date('2026-10-19T06:00:00Z')
-const group: Group = {
-  id: 'g',
-  name: 'Reparto prova',
-  timeZone: 'Europe/Rome',
-  members: [
-    { id: 'me', name: 'Luca', role: 'member' },
-    { id: 'a', name: 'Anna', role: 'manager' },
-    { id: 'b', name: 'Marco', role: 'member' },
-  ],
-  shiftTypes: DEFAULT_SHIFT_TYPES,
-}
+const group = testGroup
 const HOURS: Record<ShiftCode, [string, string]> = {
   M: ['04:00', '12:00'],
   P: ['12:00', '20:00'],
@@ -38,11 +28,7 @@ function shift(userId: string, day: number, code: ShiftCode): Shift {
   }
 }
 function source(shifts: Shift[] | Error): DataSource {
-  return {
-    userId: 'me',
-    group: () => Promise.resolve(group),
-    shifts: () => (shifts instanceof Error ? Promise.reject(shifts) : Promise.resolve(shifts)),
-  }
+  return makeSource({ shifts: () => (shifts instanceof Error ? Promise.reject(shifts) : Promise.resolve(shifts)) })
 }
 const base = [shift('me', 20, 'M'), shift('me', 21, 'P'), shift('me', 22, 'P'), shift('me', 23, 'N')]
 
