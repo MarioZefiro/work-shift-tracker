@@ -1,4 +1,5 @@
 import { useI18n } from '../i18n/I18nContext'
+import { cap, utcFormatter } from '../lib/format'
 import { buildMonth } from '../lib/home'
 
 interface Props {
@@ -7,12 +8,10 @@ interface Props {
   hasData: ReadonlySet<string> // dates with any shift, rest included
 }
 
-const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
-
 export function MiniMonth({ today, counts, hasData }: Props) {
   const { locale, t } = useI18n()
   const [year, month] = today.split('-').map(Number)
-  const fmt = (opts: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat(locale, { timeZone: 'UTC', ...opts })
+  const fmt = (opts: Intl.DateTimeFormatOptions) => utcFormatter(locale, opts)
   const monthName = fmt({ month: 'long' }).format(new Date(Date.UTC(year, month - 1, 1)))
   // 2024-01-01 is a Monday; the grid starts on Monday.
   const weekdays = Array.from({ length: 7 }, (_, i) => cap(fmt({ weekday: 'short' }).format(new Date(Date.UTC(2024, 0, 1 + i)))))

@@ -1,7 +1,7 @@
 import { useAsync } from '../app/useAsync'
 import type { DataSource } from '../data/DataSource'
 import { useI18n } from '../i18n/I18nContext'
-import { formatShift } from '../lib/format'
+import { cap, formatShift, utcFormatter } from '../lib/format'
 import { todayView, workingCountByDate } from '../lib/home'
 import { isRest } from '../lib/shift'
 import { localDateIn } from '../lib/time'
@@ -9,7 +9,6 @@ import type { Shift } from '../lib/types'
 import { LoadState } from './LoadState'
 import { MiniMonth } from './MiniMonth'
 
-const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
 const asUtc = (date: string) => new Date(`${date}T12:00:00Z`)
 
 export function HomePage({ source, now }: { source: DataSource; now: Date }) {
@@ -35,7 +34,7 @@ export function HomePage({ source, now }: { source: DataSource; now: Date }) {
     // A group may lack a type; show the bare code rather than crash.
     return type ? formatShift(s, { ...type, label: t(`shift.${s.code}`) }, group.timeZone) : s.code
   }
-  const dayFmt = (opts: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat(locale, { timeZone: 'UTC', ...opts })
+  const dayFmt = (opts: Intl.DateTimeFormatOptions) => utcFormatter(locale, opts)
   const { today, mine, colleagues, upcoming } = todayView({
     now,
     timeZone: group.timeZone,
