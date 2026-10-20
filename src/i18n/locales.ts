@@ -17,7 +17,7 @@ export type Locale = (typeof LOCALES)[number]['code']
 export const DEFAULT_LOCALE: Locale = 'it'
 const STORAGE_KEY = 'locale'
 
-const isLocale = (v: unknown): v is Locale => LOCALES.some((l) => l.code === v)
+export const isLocale = (v: unknown): v is Locale => LOCALES.some((l) => l.code === v)
 
 export function readStoredLocale(): Locale | null {
   try {
