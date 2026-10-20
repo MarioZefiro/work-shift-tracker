@@ -3,7 +3,7 @@ import { LanguageSelect } from '../i18n/LanguageSelect'
 import type { DataSource } from '../data/DataSource'
 import { GroupGate } from './GroupGate'
 
-export function SettingsPage({ source, onLeave }: { source: DataSource; onLeave?: () => void }) {
+export function SettingsPage({ source, onLeave }: { source: DataSource; onLeave: () => void }) {
   const { t } = useI18n()
   const leave = (
     <button type="button" className="button" onClick={onLeave}>
