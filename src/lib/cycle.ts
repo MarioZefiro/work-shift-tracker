@@ -1,4 +1,5 @@
 import type { Shift, ShiftCode, ShiftType } from './types'
+import { isRest } from './shift'
 import { addDays, zonedToUtc } from './time'
 
 export const DEFAULT_SHIFT_TYPES: ShiftType[] = [
@@ -27,7 +28,7 @@ export function generateCycle(opts: {
     const start = zonedToUtc(date, type.startTime, timeZone)
     // Rest spans the whole local day, which is 23 or 25 real hours on DST days.
     const end =
-      code === 'R'
+      isRest(code)
         ? zonedToUtc(addDays(date, 1), '00:00', timeZone)
         : new Date(start.getTime() + type.durationMinutes * 60_000)
     return { id: `${userId}:${date}`, userId, code, startsAt: start.toISOString(), endsAt: end.toISOString() }

@@ -3,6 +3,7 @@ import type { DataSource } from '../data/DataSource'
 import { useI18n } from '../i18n/I18nContext'
 import { formatShift } from '../lib/format'
 import { todayView, workingCountByDate } from '../lib/home'
+import { isRest } from '../lib/shift'
 import { localDateIn } from '../lib/time'
 import type { Shift } from '../lib/types'
 import { LoadState } from './LoadState'
@@ -50,7 +51,7 @@ export function HomePage({ source, now }: { source: DataSource; now: Date }) {
       <section className="card" data-code={mine?.code ?? 'none'} aria-label={t('home.mineLabel')}>
         {!mine ? (
           <p>{t('home.none')}</p>
-        ) : mine.code === 'R' ? (
+        ) : isRest(mine.code) ? (
           <p>{t('home.rest')}</p>
         ) : (
           <>

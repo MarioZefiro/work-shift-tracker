@@ -1,3 +1,4 @@
+import { isRest } from './shift'
 import { addDays, localDateIn } from './time'
 import type { Member, Shift } from './types'
 
@@ -19,7 +20,7 @@ export function todayView(a: {
     null
 
   const colleagueIds = new Set(
-    mine && mine.code !== 'R'
+    mine && !isRest(mine.code)
       ? a.shifts
           .filter(
             (s) =>
@@ -42,7 +43,7 @@ export function todayView(a: {
 export function workingCountByDate(shifts: Shift[], timeZone: string): Record<string, number> {
   const counts: Record<string, number> = {}
   for (const s of shifts) {
-    if (s.code === 'R') continue
+    if (isRest(s.code)) continue
     const d = localDateIn(new Date(s.startsAt), timeZone)
     counts[d] = (counts[d] ?? 0) + 1
   }
