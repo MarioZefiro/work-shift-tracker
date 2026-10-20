@@ -4,6 +4,7 @@ import type { Group, Member, ShiftCode } from '../lib/types'
 import type { DataSource } from './DataSource'
 
 export const TIME_ZONE = 'Europe/Rome'
+export const DEMO_GROUP_ID = 'demo-group'
 const WEEKS = 8
 const PATTERN: ShiftCode[] = ['M', 'M', 'P', 'P', 'N', 'N', 'R', 'R']
 // Distinct rotations so members are never all on the same shift.
@@ -25,7 +26,7 @@ function mondayOf(date: string): string {
 export function createDemoSource(now: Date): DataSource {
   const startDate = mondayOf(localDateIn(now, TIME_ZONE))
   const group: Group = {
-    id: 'demo-group',
+    id: DEMO_GROUP_ID,
     name: 'Reparto demo',
     timeZone: TIME_ZONE,
     members: MEMBERS,

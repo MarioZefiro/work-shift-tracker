@@ -2,6 +2,7 @@ import { cleanup, fireEvent, screen, waitFor } from '@testing-library/react'
 import { afterEach, expect, test, vi } from 'vitest'
 import type { DataSource } from '../data/DataSource'
 import { DEFAULT_SHIFT_TYPES } from '../lib/cycle'
+import { DEMO_GROUP_ID } from '../data/demo'
 import { makeSource, testGroup } from '../test-utils'
 import type { Group, Member } from '../lib/types'
 import { FaqPage } from './FaqPage'
@@ -94,7 +95,7 @@ test('SettingsPage keeps language and leave reachable when loading fails', async
 
 test('ProfilePage translates the demo group name', async () => {
   const source = withMembers(few)
-  const demo = { ...(await source.group()), id: 'demo-group', name: 'Reparto demo' }
+  const demo = { ...(await source.group()), id: DEMO_GROUP_ID, name: 'Reparto demo' }
   renderWithI18n(<ProfilePage source={{ ...source, group: () => Promise.resolve(demo) }} />, { locale: 'en' })
   expect(await screen.findByText('Demo team')).toBeTruthy()
 })
