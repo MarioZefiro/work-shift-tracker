@@ -16,9 +16,9 @@ end $$;
 
 -- Invented data. A manages G1, B is a member of G1, C manages G2 and is not in G1.
 insert into auth.users (id, email) values
-  ('a0000000-0000-0000-0000-00000000000a', 'a@example.test'),
-  ('b0000000-0000-0000-0000-00000000000b', 'b@example.test'),
-  ('c0000000-0000-0000-0000-00000000000c', 'c@example.test');
+  ('a0000000-0000-0000-0000-00000000000a', 'a@pgtap.test'),
+  ('b0000000-0000-0000-0000-00000000000b', 'b@pgtap.test'),
+  ('c0000000-0000-0000-0000-00000000000c', 'c@pgtap.test');
 insert into public.profiles (id, display_name) values
   ('a0000000-0000-0000-0000-00000000000a', 'Anna'),
   ('b0000000-0000-0000-0000-00000000000b', 'Luca'),

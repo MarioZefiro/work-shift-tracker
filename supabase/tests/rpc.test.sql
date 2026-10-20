@@ -15,10 +15,10 @@ end $$;
 
 -- Invented users: A creates the group, B and C join, D only creates a second group.
 insert into auth.users (id, email) values
-  ('a0000000-0000-0000-0000-00000000000a', 'a@example.test'),
-  ('b0000000-0000-0000-0000-00000000000b', 'b@example.test'),
-  ('c0000000-0000-0000-0000-00000000000c', 'c@example.test'),
-  ('d0000000-0000-0000-0000-00000000000d', 'd@example.test');
+  ('a0000000-0000-0000-0000-00000000000a', 'a@pgtap.test'),
+  ('b0000000-0000-0000-0000-00000000000b', 'b@pgtap.test'),
+  ('c0000000-0000-0000-0000-00000000000c', 'c@pgtap.test'),
+  ('d0000000-0000-0000-0000-00000000000d', 'd@pgtap.test');
 insert into public.profiles (id, display_name) values
   ('a0000000-0000-0000-0000-00000000000a', 'Anna'),
   ('b0000000-0000-0000-0000-00000000000b', 'Luca'),
@@ -94,7 +94,7 @@ reset role;
 
 -- The group is capped at 30 members.
 insert into auth.users (id, email)
-  select ('e0000000-0000-0000-0000-' || lpad(i::text, 12, '0'))::uuid, 'm' || i || '@example.test' from generate_series(1, 28) i;
+  select ('e0000000-0000-0000-0000-' || lpad(i::text, 12, '0'))::uuid, 'm' || i || '@pgtap.test' from generate_series(1, 28) i;
 insert into public.profiles (id, display_name)
   select ('e0000000-0000-0000-0000-' || lpad(i::text, 12, '0'))::uuid, 'Membro ' || i from generate_series(1, 28) i;
 insert into public.group_members (group_id, user_id)

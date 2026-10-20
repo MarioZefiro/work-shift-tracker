@@ -24,3 +24,9 @@ Pages depend only on the `DataSource` interface (`src/data/DataSource.ts`): `use
   when the second implementation lands; revisit then (error types, pagination, write methods).
 - The demo filters shifts by local day of `startsAt`, so a night shift belongs to the day it starts.
   A backend must follow the same rule.
+
+## Update (Plan 2)
+The Supabase implementation arrived (`src/data/supabase/supabaseSource.ts`, one group and one user) and
+`DataSource` did not change: it is still read-only. Writes (assigning shifts, creating groups and
+invitations) live in separate modules under `src/data/supabase/`, so the pages that read data keep the same
+interface. `shifts({ from, to })` follows the same rule as the demo: a shift belongs to the local day it starts.
