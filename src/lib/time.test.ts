@@ -38,4 +38,13 @@ describe('time', () => {
   ])('rejects invalid input %j %j', (date, time) => {
     expect(() => zonedToUtc(date, time, 'Europe/Rome')).toThrow(RangeError)
   })
+
+  it.each([
+    ['2026-03-29', '01:59', '2026-03-29T00:59:00.000Z'],
+    ['2026-03-29', '03:00', '2026-03-29T01:00:00.000Z'],
+    ['2026-10-25', '01:59', '2026-10-24T23:59:00.000Z'],
+    ['2026-10-25', '03:00', '2026-10-25T02:00:00.000Z'],
+  ])('converts %s %s next to a DST change', (date, time, utc) => {
+    expect(zonedToUtc(date, time, 'Europe/Rome').toISOString()).toBe(utc)
+  })
 })

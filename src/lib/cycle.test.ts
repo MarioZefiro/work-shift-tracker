@@ -23,6 +23,17 @@ describe('generateCycle', () => {
     expect(n.endsAt).toBe('2026-03-29T05:00:00.000Z')
   })
 
+  it('keeps real hours across the autumn DST change', () => {
+    const cycle = generateCycle({ ...opts, startDate: '2026-10-22' })
+    const r = cycle.find((s) => s.id === 'u1:2026-10-25')!
+    expect(r.code).toBe('R')
+    expect(r.startsAt).toBe('2026-10-24T22:00:00.000Z')
+    expect(r.endsAt).toBe('2026-10-25T23:00:00.000Z')
+    const n = cycle.find((s) => s.id === 'u1:2026-10-24')!
+    expect(n.code).toBe('N')
+    expect(Date.parse(n.endsAt) - Date.parse(n.startsAt)).toBe(8 * 3_600_000)
+  })
+
   it('ends rest at the next local midnight', () => {
     const r = generateCycle(opts).find((s) => s.id === 'u1:2026-03-29')!
     expect(r.code).toBe('R')
