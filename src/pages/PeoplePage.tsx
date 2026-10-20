@@ -1,10 +1,7 @@
 import type { DataSource } from '../data/DataSource'
 import { useI18n } from '../i18n/I18nContext'
-import type { MessageKey } from '../i18n/messages/it'
-import type { Role } from '../lib/types'
 import { GroupGate } from './GroupGate'
-
-export const ROLE_LABEL: Record<Role, MessageKey> = { manager: 'role.manager', member: 'role.member' }
+import { ROLE_LABEL } from './roles'
 
 export function PeoplePage({ source }: { source: DataSource }) {
   const { t } = useI18n()

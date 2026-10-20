@@ -96,3 +96,10 @@ test('SettingsPage keeps language and leave reachable when loading fails', async
   expect(screen.getByLabelText('Lingua')).toBeTruthy()
   expect(screen.getByRole('button', { name: 'Esci dalla demo' })).toBeTruthy()
 })
+
+test('ProfilePage translates the demo group name', async () => {
+  const source = makeSource(few)
+  const demo = { ...(await source.group()), id: 'demo-group', name: 'Reparto demo' }
+  renderWithI18n(<ProfilePage source={{ ...source, group: () => Promise.resolve(demo) }} />, { locale: 'en' })
+  expect(await screen.findByText('Demo team')).toBeTruthy()
+})

@@ -42,6 +42,7 @@ export const en: Messages = {
   'profile.notFound': 'Profile not found.',
   'profile.role': 'Role',
   'profile.group': 'Group',
+  'group.demo': 'Demo team',
   'settings.title': 'Settings',
   'settings.timeZone': "Group's time zone",
   'settings.later': 'Changes and notifications will arrive in a later version.',

@@ -43,6 +43,7 @@ export const fr: Messages = {
   'profile.notFound': 'Profil introuvable.',
   'profile.role': 'Rôle',
   'profile.group': 'Groupe',
+  'group.demo': 'Équipe démo',
   'settings.title': 'Paramètres',
   'settings.timeZone': 'Fuseau horaire du groupe',
   'settings.later': 'Les modifications et les notifications arriveront dans une version ultérieure.',

@@ -49,6 +49,7 @@ export const it = {
   'profile.notFound': 'Profilo non trovato.',
   'profile.role': 'Ruolo',
   'profile.group': 'Gruppo',
+  'group.demo': 'Reparto demo',
   'settings.title': 'Impostazioni',
   'settings.timeZone': 'Fuso orario del gruppo',
   'settings.later': 'Le modifiche e le notifiche arriveranno in una versione successiva.',

@@ -1,7 +1,7 @@
 import { useI18n } from '../i18n/I18nContext'
 import type { DataSource } from '../data/DataSource'
 import { GroupGate } from './GroupGate'
-import { ROLE_LABEL } from './PeoplePage'
+import { ROLE_LABEL } from './roles'
 
 export function ProfilePage({ source }: { source: DataSource }) {
   const { t } = useI18n()
@@ -17,7 +17,8 @@ export function ProfilePage({ source }: { source: DataSource }) {
               <dt>{t('profile.role')}</dt>
               <dd>{t(ROLE_LABEL[me.role])}</dd>
               <dt>{t('profile.group')}</dt>
-              <dd>{group.name}</dd>
+              {/* The demo group name is stored in Italian; other groups carry their own name. */}
+              <dd>{group.id === 'demo-group' ? t('group.demo') : group.name}</dd>
             </dl>
           </div>
         )
