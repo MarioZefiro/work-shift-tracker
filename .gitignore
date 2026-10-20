@@ -31,3 +31,5 @@ Welcome.md
 .superpowers/
 .claude/agent-memory-local/
 .serena/
+test-results/
+playwright-report/
