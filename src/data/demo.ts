@@ -3,7 +3,7 @@ import { addDays, localDateIn } from '../lib/time'
 import type { Group, Member, ShiftCode } from '../lib/types'
 import type { DataSource } from './DataSource'
 
-const TIME_ZONE = 'Europe/Rome'
+export const TIME_ZONE = 'Europe/Rome'
 const WEEKS = 8
 const PATTERN: ShiftCode[] = ['M', 'M', 'P', 'P', 'N', 'N', 'R', 'R']
 // Distinct rotations so members are never all on the same shift.

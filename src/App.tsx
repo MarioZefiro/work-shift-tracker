@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { AppShell } from './app/AppShell'
+import { useNow } from './app/useNow'
 import { useRoute } from './app/useRoute'
-import { createDemoSource } from './data/demo'
+import { TIME_ZONE, createDemoSource } from './data/demo'
 import { FaqPage } from './pages/FaqPage'
 import { HomePage } from './pages/HomePage'
 import { LandingPage } from './pages/LandingPage'
@@ -10,8 +11,7 @@ import { ProfilePage } from './pages/ProfilePage'
 import { SettingsPage } from './pages/SettingsPage'
 
 export default function App() {
-  // Created once: HomePage reloads whenever `now` changes identity.
-  const [now] = useState(() => new Date())
+  const now = useNow(TIME_ZONE)
   const [source, setSource] = useState<ReturnType<typeof createDemoSource> | null>(null)
   const [left, setLeft] = useState(false)
   const route = useRoute()
@@ -21,6 +21,7 @@ export default function App() {
         focusHeading={left}
         onStart={() => {
           setLeft(false)
+          // Source stays fixed after start: demo data covers eight weeks from the start week.
           setSource(createDemoSource(now))
         }}
       />
