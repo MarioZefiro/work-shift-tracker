@@ -41,6 +41,11 @@ test('useRoute exposes extra path segments as params', () => {
   expect(renderHook(() => useRoute()).result.current).toEqual({ name: 'people', params: ['x'] })
 })
 
+test('useRoute reads the invite code from #/invite/<code>', () => {
+  window.location.hash = '#/invite/abc123'
+  expect(renderHook(() => useRoute()).result.current).toEqual({ name: 'invite', params: ['abc123'] })
+})
+
 test('moves focus to the main region when the route changes', () => {
   const { rerender } = renderWithI18n(<AppShell route="home">x</AppShell>)
   const main = screen.getByRole('main')

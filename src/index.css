@@ -437,3 +437,29 @@ main {
     column-gap: 2.5rem;
   }
 }
+
+.form {
+  display: grid;
+  gap: 0.5rem;
+  width: 100%;
+  text-align: left;
+}
+
+.form label {
+  font-weight: 600;
+}
+
+.form input {
+  min-height: 44px;
+  padding-inline: 0.75rem;
+  border: 1px solid var(--grey);
+  border-radius: 0.5rem;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
