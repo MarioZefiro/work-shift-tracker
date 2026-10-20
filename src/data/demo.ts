@@ -5,6 +5,7 @@ import type { DataSource } from './DataSource'
 
 export const TIME_ZONE = 'Europe/Rome'
 export const DEMO_GROUP_ID = 'demo-group'
+export const DEMO_USER_ID = 'demo-luca'
 const WEEKS = 8
 const PATTERN: ShiftCode[] = ['M', 'M', 'P', 'P', 'N', 'N', 'R', 'R']
 // Distinct rotations so members are never all on the same shift.
@@ -12,7 +13,7 @@ const OFFSETS = [0, 2, 4, 6, 1]
 
 const MEMBERS: Member[] = [
   { id: 'demo-anna', name: 'Anna', role: 'manager' },
-  { id: 'demo-luca', name: 'Luca', role: 'member' },
+  { id: DEMO_USER_ID, name: 'Luca', role: 'member' },
   { id: 'demo-sara', name: 'Sara', role: 'member' },
   { id: 'demo-marco', name: 'Marco', role: 'member' },
   { id: 'demo-elena', name: 'Elena', role: 'member' },
@@ -32,19 +33,21 @@ export function createDemoSource(now: Date): DataSource {
     members: MEMBERS,
     shiftTypes: DEFAULT_SHIFT_TYPES,
   }
-  const shifts = MEMBERS.flatMap((member, i) =>
-    generateCycle({
+  const shifts = MEMBERS.flatMap((member, i) => {
+    const offset = OFFSETS[i]
+    if (offset === undefined) throw new Error(`Missing cycle offset for demo member ${member.id}`)
+    return generateCycle({
       userId: member.id,
-      pattern: [...PATTERN.slice(OFFSETS[i]), ...PATTERN.slice(0, OFFSETS[i])],
+      pattern: [...PATTERN.slice(offset), ...PATTERN.slice(0, offset)],
       startDate,
       weeks: WEEKS,
       timeZone: TIME_ZONE,
       types: DEFAULT_SHIFT_TYPES,
-    }),
-  )
+    })
+  })
 
   return {
-    userId: MEMBERS[1].id,
+    userId: DEMO_USER_ID,
     group: () => Promise.resolve(group),
     shifts: ({ from, to }) =>
       Promise.resolve(
