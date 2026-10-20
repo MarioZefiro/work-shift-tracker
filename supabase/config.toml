@@ -6,8 +6,8 @@ project_id = "GitHubProjectOne"
 
 [api]
 enabled = true
-# Port to use for the API URL.
-port = 54321
+# Port to use for the API URL. Moved off 54321: another app already listens there on this machine.
+port = 54421
 # Schemas to expose in your API. Tables, views and stored procedures in this schema will get API
 # endpoints. `public` and `graphql_public` schemas are included by default.
 schemas = ["public", "graphql_public"]
