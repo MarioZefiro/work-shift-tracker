@@ -26,7 +26,7 @@ test('marks the current page with aria-current', () => {
 
 test('has a skip link to the main content', () => {
   renderWithI18n(<AppShell route="home">x</AppShell>)
-  expect(screen.getByRole('link', { name: 'Vai al contenuto' })).toHaveAttribute('href', '#contenuto')
+  expect(screen.getByRole('link', { name: 'Vai al contenuto' })).toHaveAttribute('href', '#content')
 })
 
 test('useRoute falls back to home for an unknown hash', () => {

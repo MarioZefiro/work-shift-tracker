@@ -28,7 +28,7 @@ export function AppShell({ route, focusOnMount = false, children }: { route: Rou
     <>
       <a
         className="skip-link"
-        href="#contenuto"
+        href="#content"
         onClick={(e) => {
           // A real hash change would be read as an unknown route.
           e.preventDefault()
@@ -54,7 +54,7 @@ export function AppShell({ route, focusOnMount = false, children }: { route: Rou
           </ul>
         </nav>
       </header>
-      <main id="contenuto" tabIndex={-1} ref={mainRef}>
+      <main id="content" tabIndex={-1} ref={mainRef}>
         {children}
       </main>
     </>

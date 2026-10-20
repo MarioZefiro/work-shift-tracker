@@ -60,8 +60,8 @@ export function HomePage({ source, now }: { source: DataSource; now: Date }) {
         )}
       </section>
 
-      <section aria-labelledby="prossimi">
-        <h2 id="prossimi">{t('home.upcoming')}</h2>
+      <section aria-labelledby="upcoming">
+        <h2 id="upcoming">{t('home.upcoming')}</h2>
         {upcoming.length === 0 ? (
           <p>{t('home.upcomingEmpty')}</p>
         ) : (
@@ -75,8 +75,8 @@ export function HomePage({ source, now }: { source: DataSource; now: Date }) {
         )}
       </section>
 
-      <section className="home-month" aria-labelledby="mese">
-        <h2 id="mese">{t('home.month')}</h2>
+      <section className="home-month" aria-labelledby="month">
+        <h2 id="month">{t('home.month')}</h2>
         <p className="hint">{t('home.monthHint')}</p>
         <MiniMonth
           today={today}
