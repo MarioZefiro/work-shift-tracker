@@ -4,7 +4,10 @@ import { afterEach, expect, test, vi } from 'vitest'
 import { AuthProvider } from './AuthProvider'
 import { useAuth } from './AuthContext'
 
-afterEach(cleanup)
+afterEach(() => {
+  cleanup()
+  window.location.hash = ''
+})
 
 type Session = { user: { id: string } } | null
 
@@ -32,7 +35,7 @@ function Probe({ onAuth }: { onAuth?: (auth: ReturnType<typeof useAuth>) => void
   onAuth?.(auth)
   return (
     <p>
-      {auth.status}:{auth.userId ?? '-'}
+      {auth.status}:{auth.userId ?? '-'}:{auth.linkError ? 'link-error' : 'ok'}
     </p>
   )
 }
@@ -44,11 +47,11 @@ test('is loading until the first session event, then follows the session', () =>
       <Probe />
     </AuthProvider>,
   )
-  expect(screen.getByText('loading:-')).toBeInTheDocument()
+  expect(screen.getByText('loading:-:ok')).toBeInTheDocument()
   emit({ user: { id: 'u1' } })
-  expect(screen.getByText('signedIn:u1')).toBeInTheDocument()
+  expect(screen.getByText('signedIn:u1:ok')).toBeInTheDocument()
   emit(null)
-  expect(screen.getByText('signedOut:-')).toBeInTheDocument()
+  expect(screen.getByText('signedOut:-:ok')).toBeInTheDocument()
 })
 
 test('without a client the user is signed out, so the demo still works', () => {
@@ -57,7 +60,7 @@ test('without a client the user is signed out, so the demo still works', () => {
       <Probe />
     </AuthProvider>,
   )
-  expect(screen.getByText('signedOut:-')).toBeInTheDocument()
+  expect(screen.getByText('signedOut:-:ok')).toBeInTheDocument()
 })
 
 test('signInWithEmail asks for a link that returns to the app base path', async () => {
@@ -105,4 +108,19 @@ test('stops listening when it unmounts', () => {
   )
   unmount()
   expect(unsubscribe).toHaveBeenCalledOnce()
+})
+
+test('notices that the sign-in link came back with an error, and can forget it', () => {
+  window.location.hash = '#error=access_denied&error_code=otp_expired&error_description=Email+link+is+invalid'
+  const { client } = fakeClient()
+  let auth: ReturnType<typeof useAuth> | undefined
+  render(
+    <AuthProvider client={client}>
+      <Probe onAuth={(a) => (auth = a)} />
+    </AuthProvider>,
+  )
+  expect(screen.getByText(/link-error/)).toBeInTheDocument()
+  act(() => auth?.clearLinkError())
+  expect(screen.getByText(/:ok/)).toBeInTheDocument()
+  expect(window.location.hash).toBe('')
 })

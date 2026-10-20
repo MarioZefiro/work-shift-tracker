@@ -10,7 +10,7 @@ function query(result: Result) {
   const q: Record<string, unknown> = {
     then: (resolve: (r: Result) => unknown, reject?: (e: unknown) => unknown) => Promise.resolve(result).then(resolve, reject),
   }
-  for (const name of ['select', 'eq', 'gte', 'lt', 'order', 'single']) {
+  for (const name of ['select', 'eq', 'gte', 'lt', 'order', 'range', 'single']) {
     q[name] = (...args: unknown[]) => {
       calls.push([name, args])
       return q
@@ -123,4 +123,23 @@ test('shifts() does not fetch the group again once it is known', async () => {
   await source.group()
   await source.shifts({ from: '2026-10-24', to: '2026-10-24' })
   expect(from.mock.calls.filter(([t]) => t === 'groups')).toHaveLength(1)
+})
+
+test('shifts() reads past the 1000-row limit of the API instead of silently cutting the list', async () => {
+  const row = (i: number) => ({ id: `s${i}`, user_id: 'u1', code: 'M', starts_at: '2026-10-24T04:00:00Z', ends_at: '2026-10-24T12:00:00Z' })
+  const firstPage = { data: Array.from({ length: 1000 }, (_, i) => row(i)), error: null }
+  const secondPage = { data: [row(1000), row(1001), row(1002)], error: null }
+  const { client, used } = clientWith({ groups: [groupRow], shifts: [firstPage, secondPage] })
+  const result = await createSupabaseSource(client, 'g1', 'u2').shifts({ from: '2026-10-24', to: '2026-10-24' })
+  expect(result).toHaveLength(1003)
+  expect(used.shifts[0].calls).toContainEqual(['range', [0, 999]])
+  expect(used.shifts[1].calls).toContainEqual(['range', [1000, 1999]])
+  // Ties on starts_at need a second sort key, or a row could appear on two pages or on none.
+  expect(used.shifts[0].calls).toContainEqual(['order', ['id']])
+})
+
+test('shifts() stops after a short page', async () => {
+  const { client, from } = clientWith({ groups: [groupRow], shifts: [{ data: [], error: null }] })
+  await createSupabaseSource(client, 'g1', 'u2').shifts({ from: '2026-10-24', to: '2026-10-24' })
+  expect(from.mock.calls.filter(([t]) => t === 'shifts')).toHaveLength(1)
 })

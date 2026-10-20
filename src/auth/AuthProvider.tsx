@@ -6,6 +6,8 @@ import { AuthContext, type Auth } from './AuthContext'
 export function AuthProvider({ client, children }: { client: SupabaseClient | null; children: ReactNode }) {
   const [state, setState] = useState<{ ready: boolean; userId: string | null }>({ ready: client === null, userId: null })
 
+  const [linkError, setLinkError] = useState(() => /[#&]error_code=/.test(window.location.hash))
+
   useEffect(() => {
     if (!client) return
     // supabase-js reports the stored session through this listener as its first event.
@@ -19,6 +21,12 @@ export function AuthProvider({ client, children }: { client: SupabaseClient | nu
     () => ({
       status: !state.ready ? 'loading' : state.userId ? 'signedIn' : 'signedOut',
       userId: state.userId,
+      linkError,
+      clearLinkError() {
+        setLinkError(false)
+        // supabase-js leaves the error in the address; keeping it would show the message again on reload.
+        window.history.replaceState(null, '', window.location.pathname + window.location.search)
+      },
       async signInWithEmail(email) {
         if (!client) throw new Error('Supabase is not configured')
         const { error } = await client.auth.signInWithOtp({
@@ -34,7 +42,7 @@ export function AuthProvider({ client, children }: { client: SupabaseClient | nu
         if (error) throw error
       },
     }),
-    [client, state],
+    [client, state, linkError],
   )
 
   return <AuthContext.Provider value={auth}>{children}</AuthContext.Provider>

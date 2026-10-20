@@ -67,8 +67,26 @@ function AppBody({ client }: { client: SupabaseClient | null }) {
     return <AccountApp client={client} userId={auth.userId} now={now} onSignOut={() => void auth.signOut().catch(() => undefined)} />
   }
 
-  if (client && (loggingIn || inviteCode)) {
-    return <LoginPage onSubmit={auth.signInWithEmail} onBack={inviteCode ? undefined : () => setLoggingIn(false)} />
+  if (client && (loggingIn || inviteCode || auth.linkError)) {
+    return (
+      <LoginPage
+        notice={auth.linkError ? t('auth.login.expired') : undefined}
+        onSubmit={async (email) => {
+          // Forgetting the error alone would send the user back to the landing page, away from this form.
+          setLoggingIn(true)
+          auth.clearLinkError()
+          await auth.signInWithEmail(email)
+        }}
+        onBack={
+          inviteCode && !auth.linkError
+            ? undefined
+            : () => {
+                auth.clearLinkError()
+                setLoggingIn(false)
+              }
+        }
+      />
+    )
   }
 
   return (

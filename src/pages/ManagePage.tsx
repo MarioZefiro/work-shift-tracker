@@ -56,13 +56,14 @@ function Board({
   onGenerate: (shifts: Shift[]) => Promise<void>
   t: T
 }) {
-  // This month and the next, so a shift can be placed ahead of time.
+  // Five months: a rotation starts this month or the next and lasts up to 12 weeks, so all of it stays visible.
   const { status, data, reload } = useAsync(async () => {
     const group = await source.group()
     const [y, m] = localDateIn(now, group.timeZone).split('-').map(Number)
     const from = `${y}-${String(m).padStart(2, '0')}-01`
-    const to = new Date(Date.UTC(y, m + 1, 0)).toISOString().slice(0, 10)
-    return { group, from, to, shifts: await source.shifts({ from, to }) }
+    const lastDay = (monthsAhead: number) => new Date(Date.UTC(y, m + monthsAhead, 0)).toISOString().slice(0, 10)
+    const to = lastDay(4)
+    return { group, from, to, startMax: lastDay(1), shifts: await source.shifts({ from, to }) }
   }, [source, now])
 
   // Keep the last list on screen while it reloads: unmounting the forms would throw away what was typed.
@@ -79,6 +80,7 @@ function Board({
         group={shown.group}
         from={shown.from}
         to={shown.to}
+        startMax={shown.startMax}
         shifts={shown.shifts}
         today={localDateIn(now, shown.group.timeZone)}
         onAssign={onAssign}
@@ -95,6 +97,7 @@ function Form({
   group,
   from,
   to,
+  startMax,
   shifts,
   today,
   onAssign,
@@ -106,6 +109,7 @@ function Form({
   group: Group
   from: string
   to: string
+  startMax: string
   shifts: Shift[]
   today: string
   onAssign: (shift: Shift) => Promise<void>
@@ -183,7 +187,7 @@ function Form({
               : t('manage.delete.error')}
         </p>
       )}
-      <RotationForm group={group} today={today} shifts={shifts} onGenerate={onGenerate} reload={reload} t={t} />
+      <RotationForm group={group} from={from} startMax={startMax} today={today} shifts={shifts} onGenerate={onGenerate} reload={reload} t={t} />
       <h2>{t('manage.list')}</h2>
       {shifts.length === 0 && <p>{t('manage.none')}</p>}
       <ul className="shift-list">

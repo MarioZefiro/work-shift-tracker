@@ -27,6 +27,8 @@ interface ShiftRow {
   ends_at: string
 }
 
+// The API returns at most 1000 rows per request (max_rows); a longer list is read page by page.
+const PAGE_SIZE = 1000
 const CODE_ORDER: readonly ShiftCode[] = ['M', 'P', 'N', 'R']
 
 // The client has no generated database types, so the row shapes above are asserted, not inferred.
@@ -79,15 +81,23 @@ export function createSupabaseSource(client: SupabaseClient, groupId: string, us
       // Whole local days: a shift belongs to the day it starts, which may be 23 or 25 hours long.
       const start = zonedToUtc(from, '00:00', timeZone).toISOString()
       const end = zonedToUtc(addDays(to, 1), '00:00', timeZone).toISOString()
-      const rows = unwrap<ShiftRow[]>(
-        await client
-          .from('shifts')
-          .select('id, user_id, code, starts_at, ends_at')
-          .eq('group_id', groupId)
-          .gte('starts_at', start)
-          .lt('starts_at', end)
-          .order('starts_at'),
-      )
+      const rows: ShiftRow[] = []
+      for (let offset = 0; ; offset += PAGE_SIZE) {
+        const page = unwrap<ShiftRow[]>(
+          await client
+            .from('shifts')
+            .select('id, user_id, code, starts_at, ends_at')
+            .eq('group_id', groupId)
+            .gte('starts_at', start)
+            .lt('starts_at', end)
+            // A second key: with ties on starts_at a row could land on two pages or on none.
+            .order('starts_at')
+            .order('id')
+            .range(offset, offset + PAGE_SIZE - 1),
+        )
+        rows.push(...page)
+        if (page.length < PAGE_SIZE) break
+      }
       return rows.map(
         (r): Shift => ({
           id: r.id,

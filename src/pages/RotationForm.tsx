@@ -1,14 +1,17 @@
 import { useId, useState, type FormEvent } from 'react'
+import { ShiftConflictError } from '../data/supabase/shiftsAdmin'
 import type { useI18n } from '../i18n/I18nContext'
 import { MAX_WEEKS, ROTATION_PATTERN, generateRotation, rotationCodes } from '../lib/rotation'
 import { localDateIn } from '../lib/time'
 import type { Group, Shift } from '../lib/types'
 
-type Failure = 'none' | 'error' | { conflict: string }
+type Failure = 'none' | 'error' | 'clash' | { conflict: string }
 
 // The group picks people and where each one starts in the fixed three-shift cycle; the shifts are generated.
 export function RotationForm({
   group,
+  from,
+  startMax,
   today,
   shifts,
   onGenerate,
@@ -16,6 +19,8 @@ export function RotationForm({
   t,
 }: {
   group: Group
+  from: string
+  startMax: string
   today: string
   shifts: Shift[]
   onGenerate: (shifts: Shift[]) => Promise<void>
@@ -57,8 +62,9 @@ export function RotationForm({
     try {
       await onGenerate(rows)
       reload()
-    } catch {
-      setFailure('error')
+    } catch (error) {
+      // Days the list did not show: the schema's unique key refused the whole batch.
+      setFailure(error instanceof ShiftConflictError ? 'clash' : 'error')
     }
   }
 
@@ -68,7 +74,7 @@ export function RotationForm({
       <p className="hint">{t('manage.rotation.intro')}</p>
       <form className="form" onSubmit={generate}>
         <label htmlFor={ids[1]}>{t('manage.rotation.start')}</label>
-        <input id={ids[1]} type="date" required value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+        <input id={ids[1]} type="date" required min={from} max={startMax} value={startDate} onChange={(e) => setStartDate(e.target.value)} />
         <label>
           {t('manage.rotation.weeks')}
           <input type="number" min={1} max={MAX_WEEKS} required value={weeks} onChange={(e) => setWeeks(Number(e.target.value))} />
@@ -97,7 +103,9 @@ export function RotationForm({
             ? t('manage.rotation.none')
             : failure === 'error'
               ? t('manage.rotation.error')
-              : t('manage.rotation.conflict', { name: failure.conflict })}
+              : failure === 'clash'
+                ? t('manage.rotation.clash')
+                : t('manage.rotation.conflict', { name: failure.conflict })}
         </p>
       )}
       {picked.length > 0 && (

@@ -86,3 +86,23 @@ test('an invite link opened while signed out remembers the code and goes straigh
   expect(await screen.findByLabelText('Email')).toBeInTheDocument()
   expect(localStorage.getItem('pendingInvite')).toBe('abc123')
 })
+
+test('an expired or already used sign-in link says so and offers a new one', async () => {
+  window.location.hash = '#error=access_denied&error_code=otp_expired&error_description=Email+link+is+invalid'
+  const { client, signInWithOtp } = signedOutClient()
+  renderWithI18n(<App client={client} />)
+  expect(await screen.findByRole('alert')).toHaveTextContent('Il link non è più valido o è già stato usato')
+  fireEvent.change(screen.getByLabelText('Email'), { target: { value: 'luca@example.test' } })
+  fireEvent.click(screen.getByRole('button', { name: 'Inviami il link' }))
+  await screen.findByText(/Controlla la tua email/)
+  expect(signInWithOtp).toHaveBeenCalledOnce()
+  expect(window.location.hash).toBe('')
+})
+
+test('that message has a way back to the landing page', async () => {
+  window.location.hash = '#error=access_denied&error_code=otp_expired'
+  const { client } = signedOutClient()
+  renderWithI18n(<App client={client} />)
+  fireEvent.click(await screen.findByRole('button', { name: 'Indietro' }))
+  expect(await screen.findByRole('button', { name: 'Prova la demo' })).toBeInTheDocument()
+})

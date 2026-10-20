@@ -1,6 +1,7 @@
 import { cleanup, fireEvent, screen, waitFor } from '@testing-library/react'
 import { afterEach, expect, test, vi } from 'vitest'
 import { ShiftConflictError } from '../data/supabase/shiftsAdmin'
+import type { Shift } from '../lib/types'
 import { renderWithI18n } from '../i18n/test-utils'
 import { makeSource } from '../test-utils'
 import { ManagePage } from './ManagePage'
@@ -32,10 +33,10 @@ test('a member is told only the manager can assign shifts, and gets no form', as
   expect(screen.queryByRole('button', { name: 'Assegna turno' })).not.toBeInTheDocument()
 })
 
-test('asks for this month and the next, so a shift can be placed ahead of time', async () => {
+test('asks for five months, so a rotation of up to 12 weeks can be seen and corrected', async () => {
   const { shifts } = setup()
   await screen.findByRole('button', { name: 'Assegna turno' })
-  expect(shifts).toHaveBeenCalledWith({ from: '2026-10-01', to: '2026-11-30' })
+  expect(shifts).toHaveBeenCalledWith({ from: '2026-10-01', to: '2027-02-28' })
 })
 
 test('assigns the night of 24 October to a member, built with the group time zone', async () => {
@@ -149,4 +150,26 @@ test('reloads the list after generating, and shows an alert if it fails', async 
   vi.mocked(onGenerate).mockRejectedValueOnce(new Error('x'))
   fireEvent.click(screen.getByRole('button', { name: 'Genera turnazione' }))
   expect(await screen.findByRole('alert')).toHaveTextContent('Non sono riuscito a generare la turnazione')
+})
+
+test('a rotation can only start in this month or the next, so all of it stays inside the five months shown', async () => {
+  const { onGenerate } = setup()
+  const start = await screen.findByLabelText('Data di inizio')
+  expect(start).toHaveAttribute('min', '2026-10-01')
+  expect(start).toHaveAttribute('max', '2026-11-30')
+  await pickPerson('Anna', '0')
+  fireEvent.change(start, { target: { value: '2026-11-30' } })
+  fireEvent.change(screen.getByLabelText('Settimane'), { target: { value: '12' } })
+  fireEvent.click(screen.getByRole('button', { name: 'Genera turnazione' }))
+  await waitFor(() => expect(onGenerate).toHaveBeenCalledOnce())
+  const days = vi.mocked(onGenerate).mock.calls[0][0].map((s: Shift) => s.startsAt.slice(0, 10))
+  expect(days.at(-1) as string <= '2027-02-28').toBe(true)
+})
+
+test('says so when the database refuses a rotation because of days the list did not show', async () => {
+  setup({ onGenerate: () => Promise.reject(new ShiftConflictError('dup')) })
+  await pickPerson('Anna', '0')
+  fireEvent.change(screen.getByLabelText('Data di inizio'), { target: { value: '2026-10-26' } })
+  fireEvent.click(screen.getByRole('button', { name: 'Genera turnazione' }))
+  expect(await screen.findByRole('alert')).toHaveTextContent('Alcune di queste date hanno già dei turni')
 })
