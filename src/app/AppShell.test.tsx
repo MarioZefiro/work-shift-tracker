@@ -19,7 +19,7 @@ test('shows the five navigation links', () => {
 })
 
 test('marks the current page with aria-current', () => {
-  renderWithI18n(<AppShell route="persone">x</AppShell>)
+  renderWithI18n(<AppShell route="people">x</AppShell>)
   expect(screen.getByRole('link', { name: 'Persone' })).toHaveAttribute('aria-current', 'page')
   expect(screen.getByRole('link', { name: 'Home' })).not.toHaveAttribute('aria-current')
 })
@@ -31,9 +31,14 @@ test('has a skip link to the main content', () => {
 
 test('useRoute falls back to home for an unknown hash', () => {
   window.location.hash = '#/boh'
-  expect(renderHook(() => useRoute()).result.current).toBe('home')
+  expect(renderHook(() => useRoute()).result.current).toEqual({ name: 'home', params: [] })
   window.location.hash = '#/faq'
-  expect(renderHook(() => useRoute()).result.current).toBe('faq')
+  expect(renderHook(() => useRoute()).result.current).toEqual({ name: 'faq', params: [] })
+})
+
+test('useRoute exposes extra path segments as params', () => {
+  window.location.hash = '#/people/x'
+  expect(renderHook(() => useRoute()).result.current).toEqual({ name: 'people', params: ['x'] })
 })
 
 test('moves focus to the main region when the route changes', () => {

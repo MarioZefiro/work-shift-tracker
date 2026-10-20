@@ -1,19 +1,22 @@
-import { useSyncExternalStore } from 'react'
+import { useMemo, useSyncExternalStore } from 'react'
 
-export type Route = 'home' | 'persone' | 'profilo' | 'impostazioni' | 'faq'
+export type Route = 'home' | 'people' | 'profile' | 'settings' | 'faq'
 
-const ROUTES: readonly Route[] = ['home', 'persone', 'profilo', 'impostazioni', 'faq']
+const ROUTES: readonly Route[] = ['home', 'people', 'profile', 'settings', 'faq']
 
 function subscribe(onChange: () => void): () => void {
   window.addEventListener('hashchange', onChange)
   return () => window.removeEventListener('hashchange', onChange)
 }
 
-function parse(): Route {
-  const name = window.location.hash.replace(/^#\/?/, '')
-  return ROUTES.find((r) => r === name) ?? 'home'
-}
+const getHash = () => window.location.hash
 
-export function useRoute(): Route {
-  return useSyncExternalStore(subscribe, parse)
+export function useRoute(): { name: Route; params: string[] } {
+  // The snapshot must be a stable primitive; the object is derived from it.
+  const hash = useSyncExternalStore(subscribe, getHash)
+  return useMemo(() => {
+    const [first, ...params] = hash.replace(/^#\/?/, '').split('/').filter(Boolean)
+    const name = ROUTES.find((r) => r === first)
+    return name ? { name, params } : { name: 'home', params: [] }
+  }, [hash])
 }

@@ -5,9 +5,9 @@ import type { Route } from './useRoute'
 
 const LINKS: readonly { route: Route; label: MessageKey }[] = [
   { route: 'home', label: 'nav.home' },
-  { route: 'persone', label: 'nav.people' },
-  { route: 'profilo', label: 'nav.profile' },
-  { route: 'impostazioni', label: 'nav.settings' },
+  { route: 'people', label: 'nav.people' },
+  { route: 'profile', label: 'nav.profile' },
+  { route: 'settings', label: 'nav.settings' },
   { route: 'faq', label: 'nav.faq' },
 ]
 

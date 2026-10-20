@@ -14,7 +14,7 @@ export default function App() {
   const now = useNow(TIME_ZONE)
   const [source, setSource] = useState<ReturnType<typeof createDemoSource> | null>(null)
   const [left, setLeft] = useState(false)
-  const route = useRoute()
+  const { name: route } = useRoute()
 
   if (!source) return (
       <LandingPage
@@ -30,9 +30,9 @@ export default function App() {
   return (
     <AppShell route={route} focusOnMount>
       {route === 'home' && <HomePage source={source} now={now} />}
-      {route === 'persone' && <PeoplePage source={source} />}
-      {route === 'profilo' && <ProfilePage source={source} />}
-      {route === 'impostazioni' && <SettingsPage source={source} onLeave={() => {
+      {route === 'people' && <PeoplePage source={source} />}
+      {route === 'profile' && <ProfilePage source={source} />}
+      {route === 'settings' && <SettingsPage source={source} onLeave={() => {
             // Otherwise the next demo would reopen the page the user left from.
             window.location.hash = '#/'
             setLeft(true)
