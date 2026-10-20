@@ -89,3 +89,10 @@ test('GroupGate ignores a superseded response that resolves last', async () => {
   await new Promise((r) => setTimeout(r, 0))
   expect(screen.queryByText('Vecchia')).toBeNull()
 })
+
+test('SettingsPage keeps language and leave reachable when loading fails', async () => {
+  renderWithI18n(<SettingsPage source={makeSource(few, true)} onLeave={() => {}} />)
+  await screen.findByRole('alert')
+  expect(screen.getByLabelText('Lingua')).toBeTruthy()
+  expect(screen.getByRole('button', { name: 'Esci dalla demo' })).toBeTruthy()
+})

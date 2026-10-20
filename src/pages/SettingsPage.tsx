@@ -5,8 +5,13 @@ import { GroupGate } from './GroupGate'
 
 export function SettingsPage({ source, onLeave }: { source: DataSource; onLeave?: () => void }) {
   const { t } = useI18n()
+  const leave = (
+    <button type="button" className="button" onClick={onLeave}>
+      {t('settings.leave')}
+    </button>
+  )
   return (
-    <GroupGate source={source}>
+    <GroupGate source={source} extra={leave}>
       {(group) => (
         <div className="page">
           <h1>{t('settings.title')}</h1>
@@ -16,9 +21,7 @@ export function SettingsPage({ source, onLeave }: { source: DataSource; onLeave?
             <dd>{group.timeZone}</dd>
           </dl>
           <p className="hint">{t('settings.later')}</p>
-          <button type="button" className="button" onClick={onLeave}>
-            {t('settings.leave')}
-          </button>
+          {leave}
         </div>
       )}
     </GroupGate>

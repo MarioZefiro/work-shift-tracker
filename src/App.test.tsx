@@ -24,6 +24,7 @@ test('Esci dalla demo returns to the landing page', async () => {
   renderWithI18n(<App />)
   fireEvent.click(screen.getByRole('button', { name: 'Prova la demo' }))
   window.location.hash = '#/impostazioni'
+  await screen.findByRole('heading', { name: 'Impostazioni' })
   fireEvent.click(await screen.findByRole('button', { name: 'Esci dalla demo' }))
   expect(screen.getByRole('button', { name: 'Prova la demo' })).toBeInTheDocument()
 })
@@ -32,6 +33,7 @@ test('leaving the demo resets the hash and focuses the landing heading', async (
   renderWithI18n(<App />)
   fireEvent.click(screen.getByRole('button', { name: 'Prova la demo' }))
   window.location.hash = '#/impostazioni'
+  await screen.findByRole('heading', { name: 'Impostazioni' })
   fireEvent.click(await screen.findByRole('button', { name: 'Esci dalla demo' }))
   expect(window.location.hash).toBe('#/')
   expect(screen.getByRole('heading', { level: 1 })).toHaveFocus()
