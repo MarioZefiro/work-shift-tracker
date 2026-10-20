@@ -7,10 +7,12 @@ export function createTranslate(locale: string, messages: Messages): Translate {
   const rules = new Intl.PluralRules(locale)
   return (key, params = {}) => {
     const entry = messages[key]
-    const raw =
-      typeof entry === 'string'
-        ? entry
-        : ((entry as unknown as Record<string, string | undefined>)[rules.select(Number(params.count))] ?? entry.other)
+    let raw = typeof entry === 'string' ? entry : entry.other
+    if (typeof entry !== 'string') {
+      // Plural has no zero/two forms: those categories fall back to `other`.
+      const category = rules.select(Number(params.count))
+      if (category === 'one' || category === 'few' || category === 'many') raw = entry[category] ?? entry.other
+    }
     return raw.replace(/\{(\w+)\}/g, (whole, name: string) => (name in params ? String(params[name]) : whole))
   }
 }
