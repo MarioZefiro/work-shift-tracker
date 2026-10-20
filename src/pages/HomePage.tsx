@@ -1,61 +1,33 @@
-import { useEffect, useState } from 'react'
+import { useAsync } from '../app/useAsync'
 import type { DataSource } from '../data/DataSource'
 import { useI18n } from '../i18n/I18nContext'
 import { formatShift } from '../lib/format'
 import { todayView, workingCountByDate } from '../lib/home'
 import { localDateIn } from '../lib/time'
-import type { Group, Shift } from '../lib/types'
+import type { Shift } from '../lib/types'
 import { LoadState } from './LoadState'
 import { MiniMonth } from './MiniMonth'
-
-type State =
-  | { status: 'loading' }
-  | { status: 'error' }
-  | { status: 'ready'; group: Group; shifts: Shift[] }
 
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
 const asUtc = (date: string) => new Date(`${date}T12:00:00Z`)
 
 export function HomePage({ source, now }: { source: DataSource; now: Date }) {
   const { locale, t, list } = useI18n()
-  const [state, setState] = useState<State>({ status: 'loading' })
+  const { status, data, reload } = useAsync(async () => {
+    const group = await source.group()
+    // Month range plus 3 days so "next shifts" still work at month end.
+    const today = localDateIn(now, group.timeZone)
+    const [y, m] = today.split('-').map(Number)
+    const to = new Date(Date.UTC(y, m, 3)).toISOString().slice(0, 10)
+    const shifts = await source.shifts({ from: `${today.slice(0, 7)}-01`, to })
+    return { group, shifts }
+  }, [source, now])
 
-  const [attempt, setAttempt] = useState(0)
-
-  useEffect(() => {
-    // A later load (new source/now or retry) or unmount must win over this one.
-    let cancelled = false
-    setState({ status: 'loading' })
-    source
-      .group()
-      .then(async (group) => {
-        // Month range plus 3 days so "next shifts" still work at month end.
-        const today = localDateIn(now, group.timeZone)
-        const [y, m] = today.split('-').map(Number)
-        const to = new Date(Date.UTC(y, m, 3)).toISOString().slice(0, 10)
-        const shifts = await source.shifts({ from: `${today.slice(0, 7)}-01`, to })
-        if (!cancelled) setState({ status: 'ready', group, shifts })
-      })
-      .catch(() => {
-        if (!cancelled) setState({ status: 'error' })
-      })
-    return () => {
-      cancelled = true
-    }
-  }, [source, now, attempt])
-
-  if (state.status !== 'ready') {
-    return (
-      <LoadState
-        failed={state.status === 'error'}
-        errorMessage={t('error.shifts')}
-        onRetry={() => setAttempt((n) => n + 1)}
-        tall
-      />
-    )
+  if (!data) {
+    return <LoadState failed={status === 'error'} errorMessage={t('error.shifts')} onRetry={reload} tall />
   }
 
-  const { group, shifts } = state
+  const { group, shifts } = data
   // Labels come from the dictionary; the group's stored label is only the Italian default.
   const describe = (s: Shift): string => {
     const type = group.shiftTypes.find((x) => x.code === s.code)

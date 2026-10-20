@@ -1,11 +1,10 @@
-import { useEffect, useState, type ReactNode } from 'react'
+import type { ReactNode } from 'react'
+import { useAsync } from '../app/useAsync'
 import { useI18n } from '../i18n/I18nContext'
 import { LanguageSelect } from '../i18n/LanguageSelect'
 import type { DataSource } from '../data/DataSource'
 import type { Group } from '../lib/types'
 import { LoadState } from './LoadState'
-
-type State = { status: 'loading' } | { status: 'error' } | { status: 'ready'; group: Group }
 
 // Shared loading / error / ready handling for the read-only group pages.
 // `extra` stays visible while loading or after an error, so a failed load never traps the user
@@ -20,39 +19,16 @@ export function GroupGate({
   children: (group: Group) => ReactNode
 }) {
   const { t } = useI18n()
-  const [state, setState] = useState<State>({ status: 'loading' })
+  const { status, data: group, reload } = useAsync(() => source.group(), [source])
 
-  const [attempt, setAttempt] = useState(0)
-
-  useEffect(() => {
-    // Ignore a response that was superseded by a retry, a new source or unmount.
-    let cancelled = false
-    setState({ status: 'loading' })
-    source
-      .group()
-      .then((group) => {
-        if (!cancelled) setState({ status: 'ready', group })
-      })
-      .catch(() => {
-        if (!cancelled) setState({ status: 'error' })
-      })
-    return () => {
-      cancelled = true
-    }
-  }, [source, attempt])
-
-  if (state.status !== 'ready') {
+  if (!group) {
     return (
       <>
-        <LoadState
-          failed={state.status === 'error'}
-          errorMessage={t('error.group')}
-          onRetry={() => setAttempt((n) => n + 1)}
-        />
+        <LoadState failed={status === 'error'} errorMessage={t('error.group')} onRetry={reload} />
         <LanguageSelect />
         {extra}
       </>
     )
   }
-  return <>{children(state.group)}</>
+  return <>{children(group)}</>
 }
