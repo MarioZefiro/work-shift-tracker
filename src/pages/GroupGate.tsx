@@ -3,6 +3,7 @@ import { useI18n } from '../i18n/I18nContext'
 import { LanguageSelect } from '../i18n/LanguageSelect'
 import type { DataSource } from '../data/DataSource'
 import type { Group } from '../lib/types'
+import { LoadState } from './LoadState'
 
 type State = { status: 'loading' } | { status: 'error' } | { status: 'ready'; group: Group }
 
@@ -40,28 +41,14 @@ export function GroupGate({
     }
   }, [source, attempt])
 
-  if (state.status === 'loading') {
+  if (state.status !== 'ready') {
     return (
       <>
-        <div role="status" className="skeleton-wrap">
-          <span className="visually-hidden">{t('state.loading')}</span>
-          <div className="skeleton" aria-hidden="true" />
-          <div className="skeleton" aria-hidden="true" />
-        </div>
-        <LanguageSelect />
-        {extra}
-      </>
-    )
-  }
-  if (state.status === 'error') {
-    return (
-      <>
-        <div role="alert" className="card">
-          <p>{t('error.group')}</p>
-          <button type="button" className="button" onClick={() => setAttempt((n) => n + 1)}>
-            {t('state.retry')}
-          </button>
-        </div>
+        <LoadState
+          failed={state.status === 'error'}
+          errorMessage={t('error.group')}
+          onRetry={() => setAttempt((n) => n + 1)}
+        />
         <LanguageSelect />
         {extra}
       </>

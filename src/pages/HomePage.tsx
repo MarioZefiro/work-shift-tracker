@@ -5,6 +5,7 @@ import { formatShift } from '../lib/format'
 import { todayView, workingCountByDate } from '../lib/home'
 import { localDateIn } from '../lib/time'
 import type { Group, Shift } from '../lib/types'
+import { LoadState } from './LoadState'
 import { MiniMonth } from './MiniMonth'
 
 type State =
@@ -12,7 +13,6 @@ type State =
   | { status: 'error' }
   | { status: 'ready'; group: Group; shifts: Shift[] }
 
-const pad = (n: number) => String(n).padStart(2, '0')
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
 const asUtc = (date: string) => new Date(`${date}T12:00:00Z`)
 
@@ -30,13 +30,10 @@ export function HomePage({ source, now }: { source: DataSource; now: Date }) {
       .group()
       .then(async (group) => {
         // Month range plus 3 days so "next shifts" still work at month end.
-        const [y, m] = new Intl.DateTimeFormat('en-CA', { timeZone: group.timeZone, year: 'numeric', month: '2-digit' })
-          .format(now)
-          .split('-')
-          .map(Number)
-        const last = new Date(Date.UTC(y, m, 3))
-        const to = `${last.getUTCFullYear()}-${pad(last.getUTCMonth() + 1)}-${pad(last.getUTCDate())}`
-        const shifts = await source.shifts({ from: `${y}-${pad(m)}-01`, to })
+        const today = localDateIn(now, group.timeZone)
+        const [y, m] = today.split('-').map(Number)
+        const to = new Date(Date.UTC(y, m, 3)).toISOString().slice(0, 10)
+        const shifts = await source.shifts({ from: `${today.slice(0, 7)}-01`, to })
         if (!cancelled) setState({ status: 'ready', group, shifts })
       })
       .catch(() => {
@@ -47,24 +44,14 @@ export function HomePage({ source, now }: { source: DataSource; now: Date }) {
     }
   }, [source, now, attempt])
 
-  if (state.status === 'loading') {
+  if (state.status !== 'ready') {
     return (
-      <div role="status" className="skeleton-wrap">
-        <span className="visually-hidden">{t('state.loading')}</span>
-        <div className="skeleton" aria-hidden="true" />
-        <div className="skeleton" aria-hidden="true" />
-        <div className="skeleton tall" aria-hidden="true" />
-      </div>
-    )
-  }
-  if (state.status === 'error') {
-    return (
-      <div role="alert" className="card">
-        <p>{t('error.shifts')}</p>
-        <button type="button" className="button" onClick={() => setAttempt((n) => n + 1)}>
-          {t('state.retry')}
-        </button>
-      </div>
+      <LoadState
+        failed={state.status === 'error'}
+        errorMessage={t('error.shifts')}
+        onRetry={() => setAttempt((n) => n + 1)}
+        tall
+      />
     )
   }
 
@@ -83,8 +70,7 @@ export function HomePage({ source, now }: { source: DataSource; now: Date }) {
     shifts,
     members: group.members,
   })
-  const dateOf = (s: Shift) =>
-    new Intl.DateTimeFormat('en-CA', { timeZone: group.timeZone }).format(new Date(s.startsAt))
+  const dateOf = (s: Shift) => localDateIn(new Date(s.startsAt), group.timeZone)
 
   return (
     <div className="home">
