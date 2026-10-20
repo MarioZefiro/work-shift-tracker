@@ -11,7 +11,7 @@ export function LandingPage({ onStart, focusHeading = false }: { onStart: () => 
   }, [focusHeading])
   return (
     <main className="landing">
-      <img className="landing-logo" src="/favicon.svg" alt="" width="72" height="72" />
+      <img className="landing-logo" src={`${import.meta.env.BASE_URL}favicon.svg`} alt="" width="72" height="72" />
       <h1 tabIndex={-1} ref={headingRef}>
         Turni
       </h1>

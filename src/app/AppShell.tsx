@@ -39,7 +39,7 @@ export function AppShell({ route, focusOnMount = false, children }: { route: Rou
       </a>
       <header className="app-header">
         <p className="brand">
-          <img src="/favicon.svg" alt="" width="32" height="32" />
+          <img src={`${import.meta.env.BASE_URL}favicon.svg`} alt="" width="32" height="32" />
           Turni
         </p>
         <nav aria-label={t('nav.label')}>
