@@ -6,7 +6,7 @@ import { useRoute } from './app/useRoute'
 import { acceptInvite, createGroup, createInvite, listMyGroups, previewInvite } from './data/supabase/groups'
 import { clearPendingInvite, readPendingInvite } from './data/supabase/pendingInvite'
 import { profileExists, saveProfile } from './data/supabase/profile'
-import { assignShift, deleteShift } from './data/supabase/shiftsAdmin'
+import { assignShift, assignShifts, deleteShift } from './data/supabase/shiftsAdmin'
 import { createSupabaseSource } from './data/supabase/supabaseSource'
 import type { Shift } from './lib/types'
 import { useI18n } from './i18n/I18nContext'
@@ -85,6 +85,7 @@ export function AccountApp({
       isManager: groups.data?.find((g) => g.id === groupId)?.role === 'manager',
       onAssign: (shift: Shift) => assignShift(client, groupId, shift),
       onDelete: (shiftId: string) => deleteShift(client, groupId, shiftId),
+      onGenerate: (shifts: Shift[]) => assignShifts(client, groupId, shifts),
     }
     return (
       <GroupPages source={source} now={now} route={route} onLeave={() => setGroupId(null)} leaveKey="settings.switchGroup" manage={manage} />

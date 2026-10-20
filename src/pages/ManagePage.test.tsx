@@ -19,6 +19,7 @@ function setup(overrides: Partial<Parameters<typeof ManagePage>[0]> = {}) {
     isManager: true,
     onAssign: vi.fn().mockResolvedValue(undefined),
     onDelete: vi.fn().mockResolvedValue(undefined),
+    onGenerate: vi.fn().mockResolvedValue(undefined),
     ...overrides,
   }
   renderWithI18n(<ManagePage {...props} />)
@@ -91,4 +92,61 @@ test('shows an alert when assigning or deleting fails for another reason', async
   expect(await screen.findByRole('alert')).toHaveTextContent('Non sono riuscito ad assegnare il turno')
   fireEvent.click(screen.getByRole('button', { name: /Cancella.*Luca/ }))
   await waitFor(() => expect(screen.getByRole('alert')).toHaveTextContent('Non sono riuscito a cancellare il turno'))
+})
+
+// The rotation form: pick who takes part and where in the cycle each one starts.
+async function pickPerson(name: string, position: string) {
+  fireEvent.change(await screen.findByLabelText(`Posizione di partenza di ${name}`), { target: { value: position } })
+}
+
+test('generates the three-shift rotation only for the people that were picked', async () => {
+  const { onGenerate } = setup()
+  await pickPerson('Luca', '0')
+  fireEvent.change(screen.getByLabelText('Data di inizio'), { target: { value: '2026-10-26' } })
+  fireEvent.change(screen.getByLabelText('Settimane'), { target: { value: '1' } })
+  fireEvent.click(screen.getByRole('button', { name: 'Genera turnazione' }))
+  await waitFor(() => expect(onGenerate).toHaveBeenCalledOnce())
+  const shifts = vi.mocked(onGenerate).mock.calls[0][0]
+  expect(shifts).toHaveLength(7)
+  expect(new Set(shifts.map((s: { userId: string }) => s.userId))).toEqual(new Set(['me']))
+  // The clocks went back on 25 October, so 06:00 in Rome is 05:00 UTC from the 26th.
+  expect(shifts[0]).toMatchObject({ code: 'M', startsAt: '2026-10-26T05:00:00.000Z' })
+})
+
+test('shows the first two weeks of each picked person before anything is saved', async () => {
+  const { onGenerate } = setup()
+  await pickPerson('Luca', '2')
+  fireEvent.change(screen.getByLabelText('Data di inizio'), { target: { value: '2026-10-19' } })
+  expect(screen.getByText('P P N N R R M M P P N N R R')).toBeInTheDocument()
+  expect(onGenerate).not.toHaveBeenCalled()
+})
+
+test('asks to pick at least one person instead of generating nothing', async () => {
+  const { onGenerate } = setup()
+  fireEvent.click(await screen.findByRole('button', { name: 'Genera turnazione' }))
+  expect(await screen.findByRole('alert')).toHaveTextContent('Scegli almeno una persona')
+  expect(onGenerate).not.toHaveBeenCalled()
+})
+
+test('refuses to generate over days where a picked person already has a shift', async () => {
+  const { onGenerate } = setup()
+  await pickPerson('Luca', '0')
+  fireEvent.change(screen.getByLabelText('Data di inizio'), { target: { value: '2026-10-19' } })
+  fireEvent.change(screen.getByLabelText('Settimane'), { target: { value: '1' } })
+  fireEvent.click(screen.getByRole('button', { name: 'Genera turnazione' }))
+  expect(await screen.findByRole('alert')).toHaveTextContent('Luca ha già dei turni')
+  expect(onGenerate).not.toHaveBeenCalled()
+})
+
+test('reloads the list after generating, and shows an alert if it fails', async () => {
+  const { shifts, onGenerate } = setup()
+  await pickPerson('Anna', '0')
+  fireEvent.change(screen.getByLabelText('Data di inizio'), { target: { value: '2026-10-19' } })
+  fireEvent.click(screen.getByRole('button', { name: 'Genera turnazione' }))
+  await waitFor(() => expect(shifts).toHaveBeenCalledTimes(2))
+  // Reloading the list must not wipe the form: Anna is still picked.
+  expect(screen.getByLabelText('Posizione di partenza di Anna')).toHaveValue('0')
+  vi.mocked(onGenerate).mockRejectedValueOnce(new Error('x'))
+  fireEvent.click(screen.getByRole('button', { name: 'Genera turnazione' }))
+  expect(await screen.findByRole('alert')).toHaveTextContent('Non sono riuscito a generare la turnazione')
 })

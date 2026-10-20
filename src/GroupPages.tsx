@@ -25,7 +25,12 @@ export function GroupPages({
   onLeave: () => void
   leaveKey?: MessageKey
   // Only the signed-in app manages shifts; in the demo this is absent and the route falls back to home.
-  manage?: { isManager: boolean; onAssign: (shift: Shift) => Promise<void>; onDelete: (shiftId: string) => Promise<void> }
+  manage?: {
+    isManager: boolean
+    onAssign: (shift: Shift) => Promise<void>
+    onDelete: (shiftId: string) => Promise<void>
+    onGenerate: (shifts: Shift[]) => Promise<void>
+  }
 }) {
   // `invite` is not a screen of the group: an invite link opened here falls back to home.
   const page = route === 'invite' || (route === 'manage' && !manage) ? 'home' : route
@@ -37,7 +42,14 @@ export function GroupPages({
       {page === 'settings' && <SettingsPage source={source} onLeave={onLeave} leaveKey={leaveKey} />}
       {page === 'faq' && <FaqPage />}
       {page === 'manage' && manage && (
-        <ManagePage source={source} now={now} isManager={manage.isManager} onAssign={manage.onAssign} onDelete={manage.onDelete} />
+        <ManagePage
+          source={source}
+          now={now}
+          isManager={manage.isManager}
+          onAssign={manage.onAssign}
+          onDelete={manage.onDelete}
+          onGenerate={manage.onGenerate}
+        />
       )}
     </AppShell>
   )

@@ -5,7 +5,7 @@ import { AccountApp } from './AccountApp'
 import { acceptInvite, createGroup, createInvite, listMyGroups, previewInvite } from './data/supabase/groups'
 import { readPendingInvite, rememberInvite } from './data/supabase/pendingInvite'
 import { profileExists, saveProfile } from './data/supabase/profile'
-import { assignShift } from './data/supabase/shiftsAdmin'
+import { assignShift, assignShifts } from './data/supabase/shiftsAdmin'
 import { createSupabaseSource } from './data/supabase/supabaseSource'
 import { renderWithI18n } from './i18n/test-utils'
 import { makeSource } from './test-utils'
@@ -22,6 +22,7 @@ vi.mock('./data/supabase/groups', async (original) => ({
 vi.mock('./data/supabase/shiftsAdmin', async (original) => ({
   ...(await original<typeof import('./data/supabase/shiftsAdmin')>()),
   assignShift: vi.fn(),
+  assignShifts: vi.fn(),
   deleteShift: vi.fn(),
 }))
 vi.mock('./data/supabase/supabaseSource', () => ({ createSupabaseSource: vi.fn() }))
@@ -174,4 +175,17 @@ test('a plain member has no Gestione link, and the page tells them why if they o
   window.location.hash = '#/manage'
   expect(await screen.findByText(/Solo il responsabile/)).toBeInTheDocument()
   expect(assignShift).not.toHaveBeenCalled()
+})
+
+test('the manager generates the rotation for that group through the admin module', async () => {
+  vi.mocked(assignShifts).mockResolvedValue(undefined)
+  show()
+  fireEvent.click(await screen.findByRole('button', { name: 'Reparto' }))
+  await screen.findByRole('navigation')
+  window.location.hash = '#/manage'
+  fireEvent.change(await screen.findByLabelText('Posizione di partenza di Anna'), { target: { value: '0' } })
+  fireEvent.change(screen.getByLabelText('Data di inizio'), { target: { value: '2026-10-26' } })
+  fireEvent.change(screen.getByLabelText('Settimane'), { target: { value: '1' } })
+  fireEvent.click(screen.getByRole('button', { name: 'Genera turnazione' }))
+  await waitFor(() => expect(assignShifts).toHaveBeenCalledWith(client, 'g1', expect.arrayContaining([expect.objectContaining({ userId: 'a', code: 'M' })])))
 })

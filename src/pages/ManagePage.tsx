@@ -8,6 +8,7 @@ import { cap, formatShift, utcFormatter } from '../lib/format'
 import { localDateIn } from '../lib/time'
 import type { Group, Shift, ShiftCode } from '../lib/types'
 import { LoadState } from './LoadState'
+import { RotationForm } from './RotationForm'
 
 type Failure = { kind: 'assign' | 'delete' } | { kind: 'conflict'; name: string; date: string }
 
@@ -17,12 +18,14 @@ export function ManagePage({
   isManager,
   onAssign,
   onDelete,
+  onGenerate,
 }: {
   source: DataSource
   now: Date
   isManager: boolean
   onAssign: (shift: Shift) => Promise<void>
   onDelete: (shiftId: string) => Promise<void>
+  onGenerate: (shifts: Shift[]) => Promise<void>
 }) {
   const { t } = useI18n()
   if (!isManager) {
@@ -33,7 +36,7 @@ export function ManagePage({
       </div>
     )
   }
-  return <Board source={source} now={now} onAssign={onAssign} onDelete={onDelete} t={t} />
+  return <Board source={source} now={now} onAssign={onAssign} onDelete={onDelete} onGenerate={onGenerate} t={t} />
 }
 
 type T = ReturnType<typeof useI18n>['t']
@@ -43,12 +46,14 @@ function Board({
   now,
   onAssign,
   onDelete,
+  onGenerate,
   t,
 }: {
   source: DataSource
   now: Date
   onAssign: (shift: Shift) => Promise<void>
   onDelete: (shiftId: string) => Promise<void>
+  onGenerate: (shifts: Shift[]) => Promise<void>
   t: T
 }) {
   // This month and the next, so a shift can be placed ahead of time.
@@ -60,21 +65,29 @@ function Board({
     return { group, from, to, shifts: await source.shifts({ from, to }) }
   }, [source, now])
 
-  if (!data) {
+  // Keep the last list on screen while it reloads: unmounting the forms would throw away what was typed.
+  const [shown, setShown] = useState(data)
+  if (data && data !== shown) setShown(data)
+
+  if (!shown) {
     return <LoadState failed={status === 'error'} errorMessage={t('error.shifts')} onRetry={reload} />
   }
   return (
-    <Form
-      group={data.group}
-      from={data.from}
-      to={data.to}
-      shifts={data.shifts}
-      today={localDateIn(now, data.group.timeZone)}
-      onAssign={onAssign}
-      onDelete={onDelete}
-      reload={reload}
-      t={t}
-    />
+    <>
+      {status === 'error' && <LoadState failed errorMessage={t('error.shifts')} onRetry={reload} />}
+      <Form
+        group={shown.group}
+        from={shown.from}
+        to={shown.to}
+        shifts={shown.shifts}
+        today={localDateIn(now, shown.group.timeZone)}
+        onAssign={onAssign}
+        onDelete={onDelete}
+        onGenerate={onGenerate}
+        reload={reload}
+        t={t}
+      />
+    </>
   )
 }
 
@@ -86,6 +99,7 @@ function Form({
   today,
   onAssign,
   onDelete,
+  onGenerate,
   reload,
   t,
 }: {
@@ -96,6 +110,7 @@ function Form({
   today: string
   onAssign: (shift: Shift) => Promise<void>
   onDelete: (shiftId: string) => Promise<void>
+  onGenerate: (shifts: Shift[]) => Promise<void>
   reload: () => void
   t: T
 }) {
@@ -168,6 +183,7 @@ function Form({
               : t('manage.delete.error')}
         </p>
       )}
+      <RotationForm group={group} today={today} shifts={shifts} onGenerate={onGenerate} reload={reload} t={t} />
       <h2>{t('manage.list')}</h2>
       {shifts.length === 0 && <p>{t('manage.none')}</p>}
       <ul className="shift-list">
