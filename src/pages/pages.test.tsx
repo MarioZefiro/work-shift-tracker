@@ -49,6 +49,11 @@ test('ProfilePage shows my name, role and group', async () => {
   expect(screen.getByText('Reparto prova')).toBeTruthy()
 })
 
+test('ProfilePage shows a heading when the user is not in the group', async () => {
+  renderWithI18n(<ProfilePage source={makeSource({ userId: 'ghost' })} />)
+  expect(await screen.findByRole('heading', { level: 1, name: 'Profilo non trovato.' })).toBeTruthy()
+})
+
 test('SettingsPage shows the group time zone and a leave-demo button', async () => {
   const onLeave = vi.fn()
   renderWithI18n(<SettingsPage source={withMembers(few)} onLeave={onLeave} />)

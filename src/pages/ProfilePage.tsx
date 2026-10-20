@@ -10,7 +10,11 @@ export function ProfilePage({ source }: { source: DataSource }) {
     <GroupGate source={source}>
       {(group) => {
         const me = group.members.find((m) => m.id === source.userId)
-        if (!me) return <p role="alert">{t('profile.notFound')}</p>
+        if (!me) return (
+            <div className="page">
+              <h1>{t('profile.notFound')}</h1>
+            </div>
+          )
         return (
           <div className="page">
             <h1>{me.name}</h1>
