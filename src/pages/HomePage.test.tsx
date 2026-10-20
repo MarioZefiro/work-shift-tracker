@@ -1,5 +1,5 @@
 import { cleanup, fireEvent, screen, waitFor, within } from '@testing-library/react'
-import { afterEach, expect, test } from 'vitest'
+import { afterEach, expect, test, vi } from 'vitest'
 import type { DataSource } from '../data/DataSource'
 import type { Shift, ShiftCode } from '../lib/types'
 import { makeSource, testGroup } from '../test-utils'
@@ -114,4 +114,14 @@ test('falls back to the shift code when the group lacks that shift type', async 
   }
   renderWithI18n(<HomePage source={s} now={NOW} />)
   expect(await screen.findByText(/Mar 20 ottobre · M$/)).toBeInTheDocument()
+})
+
+test.each([
+  ['2026-10-31T12:00:00Z', '2026-10-01', '2026-11-03'],
+  ['2026-12-31T12:00:00Z', '2026-12-01', '2027-01-03'],
+])('at month end (%s) asks for the range %s to %s', async (nowIso, from, to) => {
+  const shifts = vi.fn(() => Promise.resolve([] as Shift[]))
+  renderWithI18n(<HomePage source={makeSource({ shifts })} now={new Date(nowIso)} />)
+  await screen.findByText('Nessun turno oggi')
+  expect(shifts).toHaveBeenCalledWith({ from, to })
 })

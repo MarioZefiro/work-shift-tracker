@@ -16,7 +16,7 @@ export function HomePage({ source, now }: { source: DataSource; now: Date }) {
   const { locale, t, list } = useI18n()
   const { status, data, reload } = useAsync(async () => {
     const group = await source.group()
-    // Month range plus 3 days so "next shifts" still work at month end.
+    // The range ends on the 3rd of next month so "next shifts" still work at month end.
     const today = localDateIn(now, group.timeZone)
     const [y, m] = today.split('-').map(Number)
     const to = new Date(Date.UTC(y, m, 3)).toISOString().slice(0, 10)
