@@ -34,3 +34,7 @@ Welcome.md
 test-results/
 playwright-report/
 graphify-out/
+
+# Personal notes and local agents: kept on disk, not published
+00-istruzioni-progetto/
+.claude/agents/
