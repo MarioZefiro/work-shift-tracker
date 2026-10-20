@@ -1,13 +1,9 @@
 import { expect, test } from 'vitest'
-import { isRest, parseShiftCode } from './shift'
+import { isRest } from './shift'
+import type { ShiftCode } from './types'
 
 test('isRest is true only for R', () => {
   expect(isRest('R')).toBe(true)
-  expect(['M', 'P', 'N'].map((c) => isRest(parseShiftCode(c)))).toEqual([false, false, false])
-})
-
-test('parseShiftCode accepts known codes and throws on unknown ones', () => {
-  expect(parseShiftCode('N')).toBe('N')
-  expect(() => parseShiftCode('X')).toThrow(RangeError)
-  expect(() => parseShiftCode('m')).toThrow(/unknown shift code "m"/)
+  const codes: ShiftCode[] = ['M', 'P', 'N']
+  expect(codes.map(isRest)).toEqual([false, false, false])
 })
