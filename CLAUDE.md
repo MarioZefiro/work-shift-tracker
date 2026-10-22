@@ -20,9 +20,13 @@ Progetto vetrina per il profilo GitHub: app frontend piccola, finita, online. Ob
 - Commit piccoli, messaggi chiari ("Aggiunge form serie"), mai "fix".
 - Push, creazione repo e deploy: chiedi sempre prima.
 
+## Comandi
+
+`npm run dev` · `npm run build` (tsc + vite) · `npm run lint` (oxlint) · `npm test` (vitest) · `npm run test:e2e` (playwright)
+
 ## Definizione di "finito"
 
-1. `npm run build` e `npm test` passano.
+1. `npm run build`, `npm run lint` e `npm test` passano.
 2. App online con link funzionante.
 3. README con screenshot o GIF, link live, stack, 3 scelte tecniche e il perché.
 4. Lighthouse accessibilità ≥ 90.
@@ -37,6 +41,15 @@ Progetto vetrina per il profilo GitHub: app frontend piccola, finita, online. Ob
 | Prima di dire "fatto" | `superpowers:verification-before-completion` |
 | Revisione codice | agent `frontend-reviewer` |
 | README | agent `readme-writer` |
+| Schermate React | agent `ui-dev` |
+| Logica, calcoli, storage | agent `logic-dev` |
+| Supabase, RLS, migrazioni | agent `backend-dev` |
+| Bug riprodotto | agent `bug-fixer` |
+| Struttura cartelle, import | agent `structure-fixer` |
+| Decisione tecnica | agent `adr-writer` (file in `docs/adr/`) |
+| Analisi design | agent `design-analyst` |
+| Accessibilità | agent `lighthouse-checker` |
+| Grafo di conoscenza | agent `graph-keeper` |
 
 ## Lingua
 

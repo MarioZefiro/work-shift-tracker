@@ -8,6 +8,8 @@
       "Bash(npx vite:*)",
       "Bash(npx vitest:*)",
       "Bash(npx tsc:*)",
+      "Bash(npx oxlint:*)",
+      "Bash(npx playwright:*)",
       "Bash(git status:*)",
       "Bash(git diff:*)",
       "Bash(git log:*)",
