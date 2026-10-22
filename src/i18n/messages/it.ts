@@ -71,6 +71,8 @@ export const it = {
   'manage.delete': 'Cancella',
   'manage.delete.error': 'Non sono riuscito a cancellare il turno. Riprova.',
   'manage.delete.done': 'Turno cancellato',
+  'manage.delete.confirm': 'Conferma cancellazione',
+  'manage.delete.cancel': 'Annulla',
   'manage.rotation.title': 'Turnazione a tre turni',
   'manage.rotation.intro': 'Mattina, pomeriggio e notte da otto ore: due giorni per turno, poi due di riposo. Scegli chi partecipa e da quale giorno del ciclo parte ognuno.',
   'manage.rotation.start': 'Data di inizio',

@@ -65,6 +65,8 @@ export const fr: Messages = {
   'manage.delete': 'Supprimer',
   'manage.delete.error': "Je n'ai pas pu supprimer le poste. Réessayez.",
   'manage.delete.done': 'Poste supprimé',
+  'manage.delete.confirm': 'Confirmer la suppression',
+  'manage.delete.cancel': 'Annuler',
   'manage.rotation.title': 'Rotation à trois postes',
   'manage.rotation.intro': "Matin, après-midi et nuit de huit heures : deux jours par poste, puis deux jours de repos. Choisissez qui participe et à quel jour du cycle chacun commence.",
   'manage.rotation.start': 'Date de début',

@@ -64,6 +64,8 @@ export const en: Messages = {
   'manage.delete': 'Delete',
   'manage.delete.error': 'I could not delete the shift. Please try again.',
   'manage.delete.done': 'Shift deleted',
+  'manage.delete.confirm': 'Confirm delete',
+  'manage.delete.cancel': 'Cancel',
   'manage.rotation.title': 'Three-shift rotation',
   'manage.rotation.intro': 'Morning, afternoon and night shifts of eight hours: two days per shift, then two days off. Pick who takes part and where in the cycle each person starts.',
   'manage.rotation.start': 'Start date',

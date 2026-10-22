@@ -1,4 +1,4 @@
-import { useId, useState, type FormEvent } from 'react'
+import { useEffect, useId, useRef, useState, type FormEvent } from 'react'
 import { useAsync } from '../app/useAsync'
 import { usePending } from '../app/usePending'
 import type { DataSource } from '../data/DataSource'
@@ -126,6 +126,15 @@ function Form({
   const [code, setCode] = useState<ShiftCode>(group.shiftTypes[0]?.code ?? 'M')
   const [failure, setFailure] = useState<Failure | null>(null)
   const [done, setDone] = useState('')
+  // Delete asks twice: the id waiting for its second click.
+  const [confirming, setConfirming] = useState<string | null>(null)
+  const listRef = useRef<HTMLHeadingElement>(null)
+  const cancelledRef = useRef<string | null>(null)
+  // The buttons are swapped, so focus would fall to the page; send it back to where the user was.
+  useEffect(() => {
+    if (confirming === null && cancelledRef.current) document.getElementById(`del-${cancelledRef.current}`)?.focus()
+    cancelledRef.current = null
+  }, [confirming])
   const [pending, run] = usePending()
   const nameOf = (id: string) => group.members.find((m) => m.id === id)?.name ?? id
   const dayOf = (s: Shift) => localDateIn(new Date(s.startsAt), group.timeZone)
@@ -149,13 +158,20 @@ function Form({
     })
   }
 
+  function cancel(id: string) {
+    cancelledRef.current = id
+    setConfirming(null)
+  }
+
   async function remove(id: string) {
     setFailure(null)
     setDone('')
+    setConfirming(null)
     await run(async () => {
       try {
         await onDelete(id)
         setDone(t('manage.delete.done'))
+        listRef.current?.focus()
         reload()
       } catch {
         setFailure({ kind: 'delete' })
@@ -201,24 +217,42 @@ function Form({
         </p>
       )}
       <RotationForm group={group} from={from} startMax={startMax} today={today} shifts={shifts} onGenerate={onGenerate} onDone={(message) => { setFailure(null); setDone(message) }} reload={reload} t={t} />
-      <h2>{t('manage.list')}</h2>
+      <h2 tabIndex={-1} ref={listRef}>
+        {t('manage.list')}
+      </h2>
       {shifts.length === 0 && <p>{t('manage.none')}</p>}
       <ul className="shift-list">
         {shifts.map((s) => {
           const type = group.shiftTypes.find((ty) => ty.code === s.code)
+          const who = (
+            <span className="visually-hidden">
+              {' '}
+              — {nameOf(s.userId)}, {dateLabel(dayOf(s))}
+            </span>
+          )
           return (
             <li key={s.id} className="card">
               <span>
                 {dateLabel(dayOf(s))} · {nameOf(s.userId)} ·{' '}
                 {type ? formatShift(s, { ...type, label: t(`shift.${s.code}`) }, group.timeZone) : s.code}
               </span>
-              <button type="button" className="button button-secondary" disabled={pending} onClick={() => remove(s.id)}>
-                {t('manage.delete')}
-                <span className="visually-hidden">
-                  {' '}
-                  — {nameOf(s.userId)}, {dateLabel(dayOf(s))}
+              {confirming === s.id ? (
+                <span className="actions" onKeyDown={(e) => e.key === 'Escape' && cancel(s.id)}>
+                  <button type="button" className="button" disabled={pending} autoFocus onClick={() => remove(s.id)}>
+                    {t('manage.delete.confirm')}
+                    {who}
+                  </button>
+                  <button type="button" className="button button-secondary" disabled={pending} onClick={() => cancel(s.id)}>
+                    {t('manage.delete.cancel')}
+                    {who}
+                  </button>
                 </span>
-              </button>
+              ) : (
+                <button type="button" id={`del-${s.id}`} className="button button-secondary" disabled={pending} onClick={() => setConfirming(s.id)}>
+                  {t('manage.delete')}
+                  {who}
+                </button>
+              )}
             </li>
           )
         })}

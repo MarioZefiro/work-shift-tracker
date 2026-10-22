@@ -64,6 +64,8 @@ export const es: Messages = {
   'manage.delete': 'Borrar',
   'manage.delete.error': 'No pude borrar el turno. Inténtalo de nuevo.',
   'manage.delete.done': 'Turno borrado',
+  'manage.delete.confirm': 'Confirmar borrado',
+  'manage.delete.cancel': 'Cancelar',
   'manage.rotation.title': 'Rotación de tres turnos',
   'manage.rotation.intro': 'Mañana, tarde y noche de ocho horas: dos días por turno y luego dos de descanso. Elige quién participa y en qué día del ciclo empieza cada uno.',
   'manage.rotation.start': 'Fecha de inicio',

@@ -65,7 +65,10 @@ test('lists the assigned shifts with who and when, and deletes one', async () =>
   const { onDelete } = setup()
   const del = await screen.findByRole('button', { name: /Cancella.*Luca/ })
   fireEvent.click(del)
-  await waitFor(() => expect(onDelete).toHaveBeenCalledWith('s1'))
+  expect(onDelete).not.toHaveBeenCalled()
+  fireEvent.click(screen.getByRole('button', { name: /Conferma cancellazione.*Luca/ }))
+  await waitFor(() => expect(onDelete).toHaveBeenCalledOnce())
+  expect(onDelete).toHaveBeenCalledWith('s1')
 })
 
 test('does not assign a second shift on a day that member already has one', async () => {
@@ -90,6 +93,7 @@ test('shows an alert when assigning or deleting fails for another reason', async
   fireEvent.click(screen.getByRole('button', { name: 'Assegna turno' }))
   expect(await screen.findByRole('alert')).toHaveTextContent('Non sono riuscito ad assegnare il turno')
   fireEvent.click(screen.getByRole('button', { name: /Cancella.*Luca/ }))
+  fireEvent.click(screen.getByRole('button', { name: /Conferma cancellazione.*Luca/ }))
   await waitFor(() => expect(screen.getByRole('alert')).toHaveTextContent('Non sono riuscito a cancellare il turno'))
 })
 
@@ -184,4 +188,12 @@ test('disables the submit button while assigning, then announces the result', as
   finish()
   await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent('Turno assegnato'))
   expect(screen.getByRole('button', { name: 'Assegna turno' })).toBeEnabled()
+})
+
+test('cancelling a delete keeps the shift and puts focus back on the Delete button', async () => {
+  const { onDelete } = setup()
+  fireEvent.click(await screen.findByRole('button', { name: /Cancella.*Luca/ }))
+  fireEvent.click(screen.getByRole('button', { name: /Annulla.*Luca/ }))
+  expect(onDelete).not.toHaveBeenCalled()
+  expect(screen.getByRole('button', { name: /Cancella.*Luca/ })).toHaveFocus()
 })

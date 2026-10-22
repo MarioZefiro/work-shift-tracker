@@ -64,6 +64,8 @@ export const de: Messages = {
   'manage.delete': 'Löschen',
   'manage.delete.error': 'Die Schicht konnte nicht gelöscht werden. Versuche es noch einmal.',
   'manage.delete.done': 'Schicht gelöscht',
+  'manage.delete.confirm': 'Löschen bestätigen',
+  'manage.delete.cancel': 'Abbrechen',
   'manage.rotation.title': 'Dreischicht-Plan',
   'manage.rotation.intro': 'Früh-, Spät- und Nachtschicht zu acht Stunden: zwei Tage pro Schicht, dann zwei freie Tage. Wähle, wer teilnimmt und an welchem Tag des Zyklus jede Person beginnt.',
   'manage.rotation.start': 'Startdatum',
