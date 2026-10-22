@@ -28,7 +28,7 @@ The live site is built with the Supabase URL and publishable key, so it offers b
 
 Notes on the live signed-in mode:
 
-- The sign-in email is sent through a custom SMTP provider (Brevo, single verified sender), because Supabase's built-in email service only delivers to team members and is limited to 2 messages per hour. The sender is a `brevosend.com` address and the email text is in English.
+- The sign-in email is sent through a custom SMTP provider (Brevo, single verified sender), because Supabase's built-in email service only delivers to team members and is limited to 2 messages per hour. Brevo's free plan allows 300 emails per day. The sender is a `brevosend.com` address and the email text is in English.
 - The Supabase project is on the Free plan, which pauses after a week without activity. If sign-in fails after a quiet period, the project may need to be restored from the Supabase dashboard. The demo is not affected.
 
 Not built: Google sign-in, shift swaps and voting, notifications, deleting an account.
