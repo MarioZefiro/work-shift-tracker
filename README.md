@@ -65,6 +65,8 @@ Rejected: a router library, which is more dependency than seven flat routes need
 
 Four more ADRs cover in-house i18n, the testing strategy, the `useAsync` hook and the Supabase rules (`docs/adr/0007-supabase-row-level-security.md`).
 
+For a map of the code, the data model and the hosted setup checklist, see the [developer guide](docs/developer-guide.md).
+
 ## Run locally
 
 ```bash
