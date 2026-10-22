@@ -442,7 +442,7 @@ button.day[aria-pressed='true'] {
   inline-size: 100%;
   max-inline-size: 11rem;
   block-size: auto;
-  border: 1px solid var(--surface);
+  border: 1px solid var(--field);
   border-radius: 0.75rem;
 }
 
@@ -550,7 +550,10 @@ button.day[aria-pressed='true'] {
   text-align: left;
 }
 
+/* Some labels wrap their field; as a grid the text sits above it like the labels that use htmlFor. */
 .form label {
+  display: grid;
+  gap: 0.5rem;
   font-weight: 600;
 }
 
