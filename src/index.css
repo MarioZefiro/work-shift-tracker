@@ -3,6 +3,7 @@
   --amber: #eaa842;
   --purple: #862d6b;
   --grey: #939696;
+  --error: #b3261e;
   --dark: #2b3a47;
   --bg: #ffffff;
   --surface: #f2f4f6;
@@ -21,6 +22,7 @@
     --surface: #222c36;
     --text: #e9eef2;
     --accent: #7db6ee;
+    --error: #ff8a80;
     --focus: var(--amber);
   }
 }
@@ -556,4 +558,49 @@ main {
   align-items: center;
   justify-content: space-between;
   gap: 0.5rem;
+}
+
+/* Message boxes: the border and the icon carry the meaning too, so it is not left to colour alone. */
+.error,
+.notice {
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+  margin: 0;
+  padding: 0.6rem 0.9rem;
+  border-inline-start: 0.4rem solid var(--tone);
+  border-radius: 0.5rem;
+  background: var(--surface);
+  text-align: start;
+}
+
+.error {
+  --tone: var(--error);
+}
+
+.notice {
+  --tone: var(--accent);
+}
+
+.error::before,
+.notice::before {
+  flex: none;
+  inline-size: 1.4rem;
+  block-size: 1.4rem;
+  border-radius: 50%;
+  background: var(--tone);
+  color: var(--bg);
+  font-weight: 700;
+  line-height: 1.4rem;
+  text-align: center;
+}
+
+.error::before {
+  content: '!';
+  content: '!' / '';
+}
+
+.notice::before {
+  content: 'i';
+  content: 'i' / '';
 }

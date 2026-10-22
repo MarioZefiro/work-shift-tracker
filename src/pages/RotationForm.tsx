@@ -106,7 +106,7 @@ export function RotationForm({
         </button>
       </form>
       {failure && (
-        <p role="alert">
+        <p role="alert" className="error">
           {failure === 'none'
             ? t('manage.rotation.none')
             : failure === 'error'

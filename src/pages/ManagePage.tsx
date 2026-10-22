@@ -208,7 +208,7 @@ function Form({
       {/* Always in the DOM: screen readers announce changes to a live region, not one that appears with its text. */}
       <p role="status">{done}</p>
       {failure && (
-        <p role="alert">
+        <p role="alert" className="error">
           {failure.kind === 'conflict'
             ? t('manage.assign.conflict', { name: failure.name, date: failure.date })
             : failure.kind === 'assign'

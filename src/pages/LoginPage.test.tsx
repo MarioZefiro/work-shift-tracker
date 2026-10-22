@@ -15,7 +15,12 @@ test('tells the user to check the inbox once the link is sent', async () => {
   renderWithI18n(<LoginPage onSubmit={() => Promise.resolve()} />)
   fireEvent.change(screen.getByLabelText('Email'), { target: { value: 'luca@example.test' } })
   fireEvent.click(screen.getByRole('button', { name: 'Inviami il link' }))
-  await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent('Controlla la tua email'))
+  const heading = await screen.findByRole('heading', { name: 'Controlla la tua email' })
+  await waitFor(() => expect(heading).toHaveFocus())
+  expect(screen.queryByLabelText('Email')).not.toBeInTheDocument()
+  fireEvent.click(screen.getByRole('button', { name: 'Usa un’altra email' }))
+  expect(screen.getByLabelText('Email')).toHaveValue('luca@example.test')
+  expect(screen.getByLabelText('Email')).toHaveFocus()
 })
 
 test('disables the button while sending, so the link is not requested twice', async () => {
@@ -26,7 +31,7 @@ test('disables the button while sending, so the link is not requested twice', as
   fireEvent.click(screen.getByRole('button', { name: 'Inviami il link' }))
   expect(await screen.findByRole('button', { name: 'Invio in corso' })).toBeDisabled()
   finish()
-  await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent('Controlla la tua email'))
+  await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent('luca@example.test'))
 })
 
 test('shows an alert when the link cannot be sent, and lets the user retry', async () => {
@@ -36,7 +41,7 @@ test('shows an alert when the link cannot be sent, and lets the user retry', asy
   fireEvent.click(screen.getByRole('button', { name: 'Inviami il link' }))
   expect(await screen.findByRole('alert')).toHaveTextContent('Non sono riuscito a inviare il link')
   fireEvent.click(screen.getByRole('button', { name: 'Inviami il link' }))
-  await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent('Controlla la tua email'))
+  await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent('luca@example.test'))
   expect(screen.queryByRole('alert')).not.toBeInTheDocument()
 })
 

@@ -79,7 +79,7 @@ export function GroupsPage({
           </li>
         ))}
       </ul>
-      {inviteFailed && <p role="alert">{t('groups.invite.error')}</p>}
+      {inviteFailed && <p role="alert" className="error">{t('groups.invite.error')}</p>}
       <form className="form" onSubmit={create}>
         <label htmlFor={nameId}>{t('groups.create.label')}</label>
         <input id={nameId} required maxLength={80} value={name} onChange={(e) => setName(e.target.value)} />
@@ -87,7 +87,7 @@ export function GroupsPage({
           {t('groups.create.submit')}
         </button>
       </form>
-      {createFailed && <p role="alert">{t('groups.create.error')}</p>}
+      {createFailed && <p role="alert" className="error">{t('groups.create.error')}</p>}
       <LanguageSelect />
       <button type="button" className="button button-secondary" onClick={onSignOut}>
         {t('auth.signOut')}
