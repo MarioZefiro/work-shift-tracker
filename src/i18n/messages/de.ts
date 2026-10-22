@@ -12,6 +12,7 @@ export const de: Messages = {
   'language.label': 'Sprache',
   'landing.intro': 'Sieh die Schichten deiner Gruppe und wer mit dir arbeitet, in einer Demo mit Beispieldaten.',
   'landing.notice': 'Demoprojekt: keine echten sensiblen Daten verwenden',
+  'landing.preview': 'Vorschau des Startbildschirms: heutige Schicht, nächste Schichten und der Monat mit der Zahl der Arbeitenden pro Tag',
   'landing.start': 'Demo ausprobieren',
   'state.loading': 'Wird geladen',
   'state.retry': 'Erneut versuchen',

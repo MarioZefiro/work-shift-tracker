@@ -19,6 +19,7 @@ export const it = {
   'language.label': 'Lingua',
   'landing.intro': 'Guarda i turni del tuo gruppo e scopri chi lavora con te, in una demo con dati di esempio.',
   'landing.notice': 'Progetto dimostrativo: non usare dati reali sensibili',
+  'landing.preview': 'Anteprima della schermata Home: il turno di oggi, i prossimi turni e il mese con il numero di persone al lavoro ogni giorno',
   'landing.start': 'Prova la demo',
   'state.loading': 'Caricamento',
   'state.retry': 'Riprova',

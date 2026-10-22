@@ -366,6 +366,22 @@ main {
   margin: 0;
 }
 
+.landing-preview {
+  inline-size: 100%;
+  max-inline-size: 11rem;
+  block-size: auto;
+  border: 1px solid var(--surface);
+  border-radius: 0.75rem;
+}
+
+.landing-footer {
+  margin-top: 1rem;
+}
+
+.landing-footer .language-select {
+  margin-block: 0;
+}
+
 @keyframes landing-in {
   from {
     opacity: 0;

@@ -13,6 +13,7 @@ export const fr: Messages = {
   'landing.intro':
     'Consulte les horaires de ton groupe et vois qui travaille avec toi, dans une démo avec des données d’exemple.',
   'landing.notice': 'Projet de démonstration : n’utilise pas de données réelles sensibles',
+  'landing.preview': "Aperçu de l'écran d'accueil : le service du jour, les prochains services et le mois avec le nombre de personnes qui travaillent chaque jour",
   'landing.start': 'Essayer la démo',
   'state.loading': 'Chargement',
   'state.retry': 'Réessayer',

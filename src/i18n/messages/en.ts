@@ -12,6 +12,7 @@ export const en: Messages = {
   'language.label': 'Language',
   'landing.intro': "See your group's shifts and find out who works with you, in a demo with sample data.",
   'landing.notice': 'Demo project: do not use real sensitive data',
+  'landing.preview': "Preview of the Home screen: today's shift, upcoming shifts and the month with the number of people working each day",
   'landing.start': 'Try the demo',
   'state.loading': 'Loading',
   'state.retry': 'Try again',

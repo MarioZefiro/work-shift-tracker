@@ -12,6 +12,7 @@ export const es: Messages = {
   'language.label': 'Idioma',
   'landing.intro': 'Mira los turnos de tu grupo y descubre quién trabaja contigo, en una demo con datos de ejemplo.',
   'landing.notice': 'Proyecto de demostración: no uses datos reales sensibles',
+  'landing.preview': 'Vista previa de la pantalla de inicio: el turno de hoy, los próximos turnos y el mes con el número de personas que trabajan cada día',
   'landing.start': 'Probar la demo',
   'state.loading': 'Cargando',
   'state.retry': 'Reintentar',
