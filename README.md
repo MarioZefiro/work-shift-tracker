@@ -1,8 +1,8 @@
 # Turni
 
-A shared shift tracker: see your own shift today, who works with you, your next shifts and how many people work each day of the month. It runs in two ways: a demo on in-memory sample data that needs no setup, and a signed-in mode on Supabase (accounts, groups, invitations and shifts assigned by the group manager).
-
 Live demo: https://mariozefiro.github.io/work-shift-tracker/
+
+A shared shift tracker: see your own shift today, who works with you, your next shifts and how many people work each day of the month. It runs in two ways: a demo on in-memory sample data that needs no setup, and a signed-in mode on Supabase (accounts, groups, invitations and shifts assigned by the group manager).
 
 <p>
   <img src="docs/screenshots/landing.png" alt="Landing page with the Try the demo button" width="260">
@@ -26,7 +26,7 @@ Everything below is in `src/` today.
 
 The live site is built with the Supabase URL and publishable key, so it offers both the demo and signed-in mode. It is deployed to GitHub Pages by `.github/workflows/deploy.yml` on every push to `main`, after `npm test` passes.
 
-Not built: Google sign-in, shift swaps and voting, notifications, deleting an account, a hosted Supabase project for signed-in mode.
+Not built: Google sign-in, shift swaps and voting, notifications, deleting an account.
 
 ## Note on the night shift in October
 
