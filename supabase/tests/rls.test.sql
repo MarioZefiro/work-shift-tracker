@@ -1,5 +1,5 @@
 begin;
-select plan(30);
+select plan(33);
 
 -- Impersonation helpers. Roles are switched with set_config so each test can undo it with `reset role`.
 create function pg_temp.act_as(uid uuid) returns void language plpgsql as $$
@@ -100,6 +100,15 @@ select is((select count(*) from public.shifts where group_id = '11111111-1111-11
 select throws_ok(
   $$update public.shifts set group_id = '22222222-2222-2222-2222-222222222222' where id = '51111111-1111-1111-1111-111111111111'$$,
   '42501', null, 'A cannot move a shift into G2');
+select throws_ok(
+  $$update public.shifts set user_id = 'a0000000-0000-0000-0000-00000000000a' where id = '51111111-1111-1111-1111-111111111111'$$,
+  '42501', null, 'A cannot reassign a shift to another member');
+select throws_ok(
+  $$update public.shift_types set label = repeat('x', 61) where group_id = '11111111-1111-1111-1111-111111111111' and code = 'M'$$,
+  '23514', null, 'a shift type label has a length limit');
+select throws_ok(
+  $$update public.groups set time_zone = 'Not/AZone' where id = '11111111-1111-1111-1111-111111111111'$$,
+  '23514', null, 'a group needs a real time zone');
 select throws_ok(
   $$insert into public.shifts (group_id, user_id, code, starts_at, ends_at)
     values ('11111111-1111-1111-1111-111111111111', 'c0000000-0000-0000-0000-00000000000c', 'M',
