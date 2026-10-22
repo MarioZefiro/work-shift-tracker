@@ -157,6 +157,8 @@ not the browser's. See ADR 0003 and `src/lib/*.test.ts`. If you touch date code,
   for information. Border and icon carry the meaning, not colour alone.
 - Deleting a shift takes two clicks (Confirm / Cancel inline, Escape cancels); focus returns to the Delete
   button on cancel and to the list heading after a delete. Use the same pattern for any new destructive action.
+- In a `.form`, a `<label>` is a grid, so a label that wraps its field (a number input, a select) shows the text
+  above the field at full width, like the labels that use `htmlFor`.
 - Field borders use `--field` (at least 3:1 against the page). The dark block redefines `--purple` so the Night
   marker stays visible on `--surface`.
 
