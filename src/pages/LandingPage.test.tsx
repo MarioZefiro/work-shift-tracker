@@ -1,9 +1,7 @@
-import { cleanup, fireEvent, screen } from '@testing-library/react'
-import { afterEach, expect, test, vi } from 'vitest'
+import { fireEvent, screen } from '@testing-library/react'
+import { expect, test, vi } from 'vitest'
 import { LandingPage } from './LandingPage'
 import { renderWithI18n } from '../i18n/test-utils'
-
-afterEach(cleanup)
 
 test('LandingPage shows the demo notice and the start button', () => {
   const onStart = vi.fn()

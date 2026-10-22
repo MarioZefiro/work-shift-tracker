@@ -1,9 +1,7 @@
-import { cleanup, fireEvent, screen, waitFor } from '@testing-library/react'
-import { afterEach, expect, test, vi } from 'vitest'
+import { fireEvent, screen, waitFor } from '@testing-library/react'
+import { expect, test, vi } from 'vitest'
 import { renderWithI18n } from '../i18n/test-utils'
 import { GroupsPage } from './GroupsPage'
-
-afterEach(cleanup)
 
 const groups = [
   { id: 'g1', name: 'Reparto', role: 'manager' as const },

@@ -1,9 +1,7 @@
-import { cleanup, fireEvent, screen, waitFor } from '@testing-library/react'
-import { afterEach, expect, test, vi } from 'vitest'
+import { fireEvent, screen, waitFor } from '@testing-library/react'
+import { expect, test, vi } from 'vitest'
 import { renderWithI18n } from '../i18n/test-utils'
 import { NamePrompt } from './NamePrompt'
-
-afterEach(cleanup)
 
 test('sends the name without surrounding spaces', async () => {
   const onSubmit = vi.fn().mockResolvedValue(undefined)

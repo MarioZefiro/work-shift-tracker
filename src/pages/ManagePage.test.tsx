@@ -1,12 +1,10 @@
-import { cleanup, fireEvent, screen, waitFor } from '@testing-library/react'
-import { afterEach, expect, test, vi } from 'vitest'
+import { fireEvent, screen, waitFor } from '@testing-library/react'
+import { expect, test, vi } from 'vitest'
 import { ShiftConflictError } from '../data/supabase/shiftsAdmin'
 import type { Shift } from '../lib/types'
 import { renderWithI18n } from '../i18n/test-utils'
 import { makeSource } from '../test-utils'
 import { ManagePage } from './ManagePage'
-
-afterEach(cleanup)
 
 const NOW = new Date('2026-10-20T12:00:00Z')
 

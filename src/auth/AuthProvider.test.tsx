@@ -1,11 +1,10 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
-import { act, cleanup, render, screen } from '@testing-library/react'
+import { act, render, screen } from '@testing-library/react'
 import { afterEach, expect, test, vi } from 'vitest'
 import { AuthProvider } from './AuthProvider'
 import { useAuth } from './AuthContext'
 
 afterEach(() => {
-  cleanup()
   window.location.hash = ''
 })
 

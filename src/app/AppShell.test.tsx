@@ -6,7 +6,6 @@ import { useRoute } from './useRoute'
 import { renderWithI18n } from '../i18n/test-utils'
 
 afterEach(() => {
-  cleanup()
   window.location.hash = ''
 })
 

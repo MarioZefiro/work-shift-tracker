@@ -1,11 +1,10 @@
-import { cleanup, fireEvent, screen } from '@testing-library/react'
+import { fireEvent, screen } from '@testing-library/react'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import { afterEach, beforeEach, expect, test, vi } from 'vitest'
 import App from './App'
 import { renderWithI18n } from './i18n/test-utils'
 
 afterEach(() => {
-  cleanup()
   localStorage.clear()
 })
 beforeEach(() => {

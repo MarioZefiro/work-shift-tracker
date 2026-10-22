@@ -1,5 +1,5 @@
-import { cleanup, fireEvent, screen, waitFor } from '@testing-library/react'
-import { afterEach, expect, test, vi } from 'vitest'
+import { fireEvent, screen, waitFor } from '@testing-library/react'
+import { expect, test, vi } from 'vitest'
 import type { DataSource } from '../data/DataSource'
 import { DEFAULT_SHIFT_TYPES } from '../lib/cycle'
 import { DEMO_GROUP_ID } from '../data/demo'
@@ -10,8 +10,6 @@ import { PeoplePage } from './PeoplePage'
 import { ProfilePage } from './ProfilePage'
 import { SettingsPage } from './SettingsPage'
 import { renderWithI18n } from '../i18n/test-utils'
-
-afterEach(cleanup)
 
 const withMembers = (members: Member[], fail = false) =>
   makeSource({ group: () => (fail ? Promise.reject(new Error('x')) : Promise.resolve({ ...testGroup, members })) })

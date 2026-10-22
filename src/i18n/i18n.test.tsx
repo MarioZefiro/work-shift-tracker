@@ -10,7 +10,6 @@ import { createTranslate } from './translate'
 import { useI18n } from './I18nContext'
 
 afterEach(() => {
-  cleanup()
   vi.restoreAllMocks()
   window.localStorage.clear()
 })
@@ -103,6 +102,9 @@ test('plural forms follow the locale', () => {
   const fr = createTranslate('fr', LOCALES[2].messages)
   expect(fr('month.working', { count: 1 })).toBe('1 personne en service')
   expect(fr('month.working', { count: 4 })).toBe('4 personnes en service')
+  const it = createTranslate('it', LOCALES[0].messages)
+  expect(it('invite.members', { count: 1 })).toBe('1 membro')
+  expect(it('invite.members', { count: 3 })).toBe('3 membri')
 })
 
 test('mini month labels pluralise per locale and flag days without data', () => {

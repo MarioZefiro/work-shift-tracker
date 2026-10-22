@@ -1,12 +1,10 @@
-import { cleanup, fireEvent, screen, waitFor, within } from '@testing-library/react'
-import { afterEach, expect, test, vi } from 'vitest'
+import { fireEvent, screen, waitFor, within } from '@testing-library/react'
+import { expect, test, vi } from 'vitest'
 import type { DataSource } from '../data/DataSource'
 import type { Shift, ShiftCode } from '../lib/types'
 import { makeSource, testGroup } from '../test-utils'
 import { HomePage } from './HomePage'
 import { renderWithI18n } from '../i18n/test-utils'
-
-afterEach(cleanup)
 
 // 2026-10-19 08:00 in Rome (CEST, UTC+2).
 const NOW = new Date('2026-10-19T06:00:00Z')

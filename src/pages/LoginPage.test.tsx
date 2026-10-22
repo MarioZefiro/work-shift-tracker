@@ -1,9 +1,7 @@
-import { cleanup, fireEvent, screen, waitFor } from '@testing-library/react'
-import { afterEach, expect, test, vi } from 'vitest'
+import { fireEvent, screen, waitFor } from '@testing-library/react'
+import { expect, test, vi } from 'vitest'
 import { renderWithI18n } from '../i18n/test-utils'
 import { LoginPage } from './LoginPage'
-
-afterEach(cleanup)
 
 test('asks for the email with a label and sends it', async () => {
   const onSubmit = vi.fn().mockResolvedValue(undefined)

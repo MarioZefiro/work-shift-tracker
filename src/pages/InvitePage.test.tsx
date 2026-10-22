@@ -1,10 +1,8 @@
 import { cleanup, fireEvent, screen } from '@testing-library/react'
-import { afterEach, expect, test, vi } from 'vitest'
+import { expect, test, vi } from 'vitest'
 import { GroupFullError, InvalidInviteError } from '../data/supabase/groups'
 import { renderWithI18n } from '../i18n/test-utils'
 import { InvitePage } from './InvitePage'
-
-afterEach(cleanup)
 
 const info = { groupName: 'Reparto', memberCount: 3 }
 
