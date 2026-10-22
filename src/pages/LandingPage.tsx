@@ -32,7 +32,7 @@ export function LandingPage({
         src={`${import.meta.env.BASE_URL}home.png`}
         alt={t('landing.preview')}
         width="390"
-        height="958"
+        height="944"
       />
       <button type="button" className="button" onClick={onStart}>
         {t('landing.start')}
