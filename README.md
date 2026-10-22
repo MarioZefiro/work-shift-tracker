@@ -80,6 +80,8 @@ For a map of the code, the data model and the hosted setup checklist, see the [d
 
 ## Run locally
 
+Node 26 (see `.nvmrc`).
+
 ```bash
 npm install
 npm run dev
