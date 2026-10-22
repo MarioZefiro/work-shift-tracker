@@ -1,4 +1,5 @@
 import { useId, useState, type FormEvent } from 'react'
+import { usePending } from '../app/usePending'
 import type { MyGroup } from '../data/supabase/groups'
 import { useI18n } from '../i18n/I18nContext'
 import { LanguageSelect } from '../i18n/LanguageSelect'
@@ -23,27 +24,33 @@ export function GroupsPage({
   const [createFailed, setCreateFailed] = useState(false)
   const [links, setLinks] = useState<Record<string, string>>({})
   const [inviteFailed, setInviteFailed] = useState(false)
+  const [creating, runCreate] = usePending()
+  const [inviting, runInvite] = usePending()
 
   async function create(e: FormEvent) {
     e.preventDefault()
     const trimmed = name.trim()
     if (!trimmed) return
     setCreateFailed(false)
-    try {
-      await onCreate(trimmed)
-    } catch {
-      setCreateFailed(true)
-    }
+    await runCreate(async () => {
+      try {
+        await onCreate(trimmed)
+      } catch {
+        setCreateFailed(true)
+      }
+    })
   }
 
   async function invite(groupId: string) {
     setInviteFailed(false)
-    try {
-      const link = await onInvite(groupId)
-      setLinks((current) => ({ ...current, [groupId]: link }))
-    } catch {
-      setInviteFailed(true)
-    }
+    await runInvite(async () => {
+      try {
+        const link = await onInvite(groupId)
+        setLinks((current) => ({ ...current, [groupId]: link }))
+      } catch {
+        setInviteFailed(true)
+      }
+    })
   }
 
   return (
@@ -58,7 +65,7 @@ export function GroupsPage({
             </button>
             <span>{t(ROLE_LABEL[g.role])}</span>
             {g.role === 'manager' && (
-              <button type="button" className="button button-secondary" onClick={() => invite(g.id)}>
+              <button type="button" className="button button-secondary" disabled={inviting} onClick={() => invite(g.id)}>
                 {t('groups.invite.create')}
                 <span className="visually-hidden"> — {g.name}</span>
               </button>
@@ -76,7 +83,7 @@ export function GroupsPage({
       <form className="form" onSubmit={create}>
         <label htmlFor={nameId}>{t('groups.create.label')}</label>
         <input id={nameId} required maxLength={80} value={name} onChange={(e) => setName(e.target.value)} />
-        <button type="submit" className="button">
+        <button type="submit" className="button" disabled={creating}>
           {t('groups.create.submit')}
         </button>
       </form>

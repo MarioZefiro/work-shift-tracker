@@ -171,3 +171,17 @@ test('says so when the database refuses a rotation because of days the list did 
   fireEvent.click(screen.getByRole('button', { name: 'Genera turnazione' }))
   expect(await screen.findByRole('alert')).toHaveTextContent('Alcune di queste date hanno già dei turni')
 })
+
+test('disables the submit button while assigning, then announces the result', async () => {
+  let finish: () => void = () => {}
+  const onAssign = vi.fn(() => new Promise<void>((resolve) => (finish = resolve)))
+  setup({ onAssign })
+  fireEvent.change(await screen.findByLabelText('Data'), { target: { value: '2026-10-24' } })
+  fireEvent.click(screen.getByRole('button', { name: 'Assegna turno' }))
+  await waitFor(() => expect(screen.getByRole('button', { name: 'Assegna turno' })).toBeDisabled())
+  fireEvent.click(screen.getByRole('button', { name: 'Assegna turno' }))
+  expect(onAssign).toHaveBeenCalledOnce()
+  finish()
+  await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent('Turno assegnato'))
+  expect(screen.getByRole('button', { name: 'Assegna turno' })).toBeEnabled()
+})
