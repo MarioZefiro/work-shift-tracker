@@ -26,6 +26,11 @@ Everything below is in `src/` today.
 
 The live site is built with the Supabase URL and publishable key, so it offers both the demo and signed-in mode. It is deployed to GitHub Pages by `.github/workflows/deploy.yml` on every push to `main`, after `npm test` passes.
 
+Notes on the live signed-in mode:
+
+- The sign-in email is sent through a custom SMTP provider (Brevo, single verified sender), because Supabase's built-in email service only delivers to team members and is limited to 2 messages per hour. The sender is a `brevosend.com` address and the email text is in English.
+- The Supabase project is on the Free plan, which pauses after a week without activity. If sign-in fails after a quiet period, the project may need to be restored from the Supabase dashboard. The demo is not affected.
+
 Not built: Google sign-in, shift swaps and voting, notifications, deleting an account.
 
 ## Note on the night shift in October
