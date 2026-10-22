@@ -287,6 +287,16 @@ main {
   margin: 0 0 1rem;
 }
 
+.page h2 {
+  font-size: 1.1rem;
+  margin: 1.5rem 0 0.5rem;
+}
+
+.page h3 {
+  font-size: 1rem;
+  margin: 1rem 0 0.5rem;
+}
+
 .people {
   list-style: none;
   margin: 0;
@@ -482,7 +492,8 @@ main {
   font-weight: 600;
 }
 
-.form input {
+.form input,
+.form select {
   min-height: 44px;
   padding-inline: 0.75rem;
   border: 1px solid var(--grey);
