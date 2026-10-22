@@ -59,7 +59,12 @@ supabase/
   tests/                pgTAP
 e2e/                    Playwright: accessibility (axe) and midnight rollover
 docs/adr/               Architecture decision records
+public/                 Static files: favicon, apple-touch-icon, home.png (landing preview), landing.png (og:image)
 ```
+
+`index.html` carries the `theme-color` (light and dark), Open Graph and `apple-touch-icon` tags. `og:image` must be an
+absolute URL, so it hardcodes the GitHub Pages address; `home.png` and `landing.png` in `public/` are copies of
+`docs/screenshots/`, so retake both together.
 
 Unit and component tests sit next to the code (`*.test.ts(x)`).
 
