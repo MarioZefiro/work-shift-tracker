@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { buildMonth, todayView, workingCountByDate } from './home'
+import { buildMonth, rosterByDate, todayView, workingCountByDate } from './home'
 import type { Member, Shift, ShiftCode } from './types'
 
 const TZ = 'Europe/Rome'
@@ -92,5 +92,29 @@ describe('buildMonth', () => {
 
   it('handles a month starting on Monday', () => {
     expect(buildMonth(2026, 5)[0][0]).toBe('2026-06-01')
+  })
+})
+
+describe('rosterByDate', () => {
+  const shifts = [
+    shift('1', 'anna', 'P', '2026-10-22'),
+    shift('2', 'me', 'M', '2026-10-22'),
+    shift('3', 'anna', 'R', '2026-10-23'),
+    shift('4', 'ghost', 'M', '2026-10-23'),
+  ]
+  const roster = rosterByDate(shifts, members, TZ)
+
+  it('lists several people on a day, same start ordered by name', () => {
+    expect(roster['2026-10-22'].map((e) => e.name)).toEqual(['Anna', 'Io'])
+  })
+
+  it('keeps rest and finds my own shift', () => {
+    expect(roster['2026-10-23'][0].shift.code).toBe('R')
+    expect(roster['2026-10-22'].find((e) => e.userId === 'me')?.shift.code).toBe('M')
+  })
+
+  it('has no entry for a day without data and skips unknown users', () => {
+    expect(roster['2026-10-24']).toBeUndefined()
+    expect(roster['2026-10-23']).toHaveLength(1)
   })
 })
