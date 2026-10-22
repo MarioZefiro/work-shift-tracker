@@ -74,7 +74,7 @@ Rejected: adding 24 hours to a timestamp and parsing local date strings, which g
 There are five flat pages plus two routes, `invite` and `manage`. `src/app/useRoute.ts` reads `window.location.hash` with `useSyncExternalStore`. The part after `#` never reaches the server, so reloads and deep links work on any static host with no rewrite rules.
 Rejected: a router library, which is more dependency than seven flat routes need. Cost: no nested routes, guards or typed params (`params` is a list of strings; only `#/invite/<code>` reads it), and URLs contain `#/`. Revisit if routes become nested. See `docs/adr/0002-hash-routing-without-library.md`.
 
-Four more ADRs cover in-house i18n, the testing strategy, the `useAsync` hook and the Supabase rules (`docs/adr/0007-supabase-row-level-security.md`).
+Five more ADRs cover in-house i18n, the testing strategy, the `useAsync` hook, the Supabase rules (`docs/adr/0007-supabase-row-level-security.md`) and the Content Security Policy (`docs/adr/0008-csp-meta-tag-at-build.md`).
 
 For a map of the code, the data model and the hosted setup checklist, see the [developer guide](docs/developer-guide.md).
 

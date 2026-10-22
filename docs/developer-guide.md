@@ -55,7 +55,7 @@ src/
   pages/                One file per screen, plus LoadState and small widgets
   i18n/                 Own translation layer; messages/{it,en,fr,es,de}.ts
 supabase/
-  migrations/           schema, rls, rpc (apply in this order)
+  migrations/           schema, rls, rpc, hardening (apply in this order)
   tests/                pgTAP
 e2e/                    Playwright: accessibility (axe) and midnight rollover
 docs/adr/               Architecture decision records
@@ -163,10 +163,10 @@ Everything is in `supabase/migrations/`, applied in file order. Rationale: ADR 0
 | Table | Purpose |
 |-------|---------|
 | `profiles` | One row per user (`id` = `auth.users.id`), `display_name`. No email column |
-| `groups` | `name`, `time_zone` (default `Europe/Rome`) |
+| `groups` | `name`, `time_zone` (default `Europe/Rome`; a trigger rejects names missing from `pg_timezone_names`) |
 | `group_members` | `(group_id, user_id)`, `role` in `manager` / `member` |
 | `group_invites` | Stores only the sha256 hash of the code, expiry, `max_uses`, `uses`, `revoked_at` |
-| `shift_types` | Per group: codes `M`, `P`, `N`, `R` with label, start time, duration |
+| `shift_types` | Per group: codes `M`, `P`, `N`, `R` with label (1 to 60 characters), start time, duration |
 | `shifts` | `group_id`, `user_id`, `code`, `starts_at`, `ends_at`; unique per user and start |
 
 A shift's `(group_id, user_id)` references `group_members`, so leaving a group deletes its shifts.
@@ -174,7 +174,8 @@ A shift's `(group_id, user_id)` references `group_members`, so leaving a group d
 ### 5.2 Access model
 
 - Row level security is on for every table. `anon` has no grants; `authenticated` has only what the policies
-  need, with column-level `update` grants (a manager cannot rewrite `user_id` or `group_id`).
+  need, with column-level `update` grants (a manager cannot rewrite `user_id` or `group_id`; on `shifts` only `code`,
+  `starts_at` and `ends_at` can change, so a shift never moves to another member or group).
 - Members read their group's data; managers write shifts, shift types, roles and invitations.
 - There is no insert policy on `groups`, `group_members` or `group_invites`: creating and joining go through
   four functions, `create_group`, `create_invite`, `preview_invite`, `accept_invite`. They run as the owner and
@@ -224,7 +225,7 @@ stops the deploy. The variables are baked in at build time, so changing one requ
 
 Do these once per project, in this order:
 
-1. **Apply the migrations** in order: `…_schema.sql`, `…_rls.sql`, `…_rpc.sql` (SQL Editor, or
+1. **Apply the migrations** in order: `…_schema.sql`, `…_rls.sql`, `…_rpc.sql`, `…_hardening.sql` (SQL Editor, or
    `npx supabase link` then `npx supabase db push`). Hosted projects do not get the migrations on their own.
 2. **Authentication → URL Configuration:** set the Site URL and add a Redirect URL, both
    `https://<user>.github.io/work-shift-tracker/`. Add `http://localhost:5173/work-shift-tracker/` to test locally.
@@ -235,12 +236,24 @@ Do these once per project, in this order:
 5. **Free plan:** a project with no activity for a week is paused and sign-in stops until it is resumed from the
    dashboard.
 
+### 6.4 Security headers and dependency updates
+
+- GitHub Pages cannot send response headers, so `vite.config.ts` injects a `Content-Security-Policy` meta tag
+  into the **production build only** (the dev server needs inline scripts and websockets for hot reload). Scripts
+  and requests are limited to the app itself and the origin in `VITE_SUPABASE_URL`; objects and `<base>` are
+  off. Inline styles stay allowed because React sets `style` attributes. `frame-ancestors` is ignored in a meta
+  tag, so clickjacking protection needs a host that sends headers. Rationale: ADR 0008.
+- `index.html` sets `<meta name="referrer" content="no-referrer">`.
+- A new origin the app must call (an API, a font, an image host) has to be added to the policy in
+  `vite.config.ts`, or the browser blocks it with no error in the UI. Check the console for "Content Security Policy".
+- `.github/dependabot.yml` opens weekly pull requests for npm packages and GitHub Actions.
+
 ## 7. Testing
 
 | Layer | Tool | Where | Covers |
 |-------|------|-------|--------|
 | Logic and components | Vitest + Testing Library | next to the code | dates, rotation, storage, auth, pages with real behaviour |
-| Access rules and functions | pgTAP | `supabase/tests/` | RLS, grants, the four functions |
+| Access rules and functions | pgTAP | `supabase/tests/` | RLS, grants, label and time zone checks, the four functions |
 | End to end | Playwright + axe | `e2e/` | accessibility of the landing, the demo pages and Home with a month day selected (real colors, so contrast is checked here), midnight rollover with a fake clock |
 
 Component tests clean up in the shared `src/test-setup.ts`. Test logic that matters (calculations, storage,
@@ -271,4 +284,7 @@ layout, so that helper skips `color-contrast`; contrast for these screens is not
 | No sign-in email arrives | Built-in email limit (2 per hour) | Wait an hour, or configure custom SMTP |
 | Link works once, then `otp_expired` | Links are single use; some mail apps open them to preview | Request a new one and open it once |
 | `Missing VITE_SUPABASE_URL: set it in .env.local` | A client was requested without the variables | Set them, or run the demo only |
+| `npx supabase test db` reports `no pgTAP tests found` | The container runtime does not mount the project folder (Colima mounts only `$HOME`, not `/Volumes`) | Move the repo under `$HOME`, or pipe the files to `psql` in the `supabase_db_*` container |
+| `supabase start` fails with `supabase_vector_… unhealthy` on Colima | The log collector needs the Docker socket | `npx supabase start -x vector` |
+| A request works in dev but fails in the built site | The Content Security Policy blocks the origin | Section 6.4 |
 | Blank page or missing assets on a static host | Wrong `base` | Keep `base` equal to the site's sub-path |
