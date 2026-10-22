@@ -25,7 +25,10 @@ the client sends, the database must refuse what the user may not do.
   Unknown, expired, revoked and used-up invitations all give the same error, so a guesser learns nothing.
 - **A group always keeps a manager**, enforced by a trigger on `group_members`.
 - **Sign-in is a link sent by email.** The link must return under the app's base path.
-- **Tests:** pgTAP files in `supabase/tests/` (54 assertions: 30 for the access rules, 24 for the functions) run on
+- **Least privilege on `shifts`** (`…_hardening.sql`): only `code`, `starts_at` and `ends_at` can be updated, a
+  label is 1 to 60 characters, and a trigger rejects a `time_zone` that is not an IANA name, because a bad zone would
+  break the calendar of every member. A check constraint cannot read `pg_timezone_names`, hence the trigger.
+- **Tests:** pgTAP files in `supabase/tests/` (57 assertions: 33 for the access rules, 24 for the functions) run on
   the local stack with `npx supabase test db`.
 
 ## Consequences
