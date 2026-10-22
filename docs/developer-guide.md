@@ -18,6 +18,8 @@ There is no server of our own. The app is a static site; the database enforces t
 
 ## 2. Setup
 
+Node 26 (the major in `.nvmrc`; the deploy workflow reads the same file, so CI and local runs use one version).
+
 ```bash
 npm install
 npm run dev        # http://localhost:5173/work-shift-tracker/
@@ -246,7 +248,9 @@ Do these once per project, in this order:
 - `index.html` sets `<meta name="referrer" content="no-referrer">`.
 - A new origin the app must call (an API, a font, an image host) has to be added to the policy in
   `vite.config.ts`, or the browser blocks it with no error in the UI. Check the console for "Content Security Policy".
-- `.github/dependabot.yml` opens weekly pull requests for npm packages and GitHub Actions.
+- `.github/dependabot.yml` opens weekly pull requests for npm packages and GitHub Actions. Major updates of
+  `@types/node` are ignored: the types follow the Node major in `.nvmrc`, so moving to a new Node means changing
+  `.nvmrc` and `@types/node` in the same commit.
 
 ## 7. Testing
 
