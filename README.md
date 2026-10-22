@@ -2,7 +2,7 @@
 
 A shared shift tracker: see your own shift today, who works with you, your next shifts and how many people work each day of the month. It runs in two ways: a demo on in-memory sample data that needs no setup, and a signed-in mode on Supabase (accounts, groups, invitations and shifts assigned by the group manager).
 
-Live demo: coming soon (deploy not decided yet)
+Live demo: https://mariozefiro.github.io/work-shift-tracker/
 
 <p>
   <img src="docs/screenshots/landing.png" alt="Landing page with the Try the demo button" width="260">
