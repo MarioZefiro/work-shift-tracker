@@ -1,3 +1,4 @@
+import { isRest } from './shift'
 import type { Shift, ShiftType } from './types'
 
 function hhmm(iso: string, timeZone: string): string {
@@ -7,6 +8,8 @@ function hhmm(iso: string, timeZone: string): string {
 }
 
 export function formatShift(shift: Shift, type: ShiftType, timeZone: string): string {
+  // Rest spans the whole day; "00:00–00:00" would read as an error.
+  if (isRest(shift.code)) return type.label
   return `${type.label} ${hhmm(shift.startsAt, timeZone)}–${hhmm(shift.endsAt, timeZone)}`
 }
 

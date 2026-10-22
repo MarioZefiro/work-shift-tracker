@@ -23,12 +23,12 @@ describe('createDemoSource', () => {
     expect(await createDemoSource(NOW).shifts(WIDE)).toEqual(await createDemoSource(NOW).shifts(WIDE))
   })
 
-  it('covers eight weeks starting from the Monday of the current week', async () => {
+  it('covers ten weeks starting from the Monday on or before the 1st of the month', async () => {
     const all = await createDemoSource(NOW).shifts(WIDE)
     const mine = all.filter((s) => s.userId === all[0].userId)
-    expect(mine).toHaveLength(56)
-    expect(localDateIn(new Date(mine[0].startsAt), 'Europe/Rome')).toBe('2026-03-16')
-    expect(all).toHaveLength(56 * 5)
+    expect(mine).toHaveLength(70)
+    expect(localDateIn(new Date(mine[0].startsAt), 'Europe/Rome')).toBe('2026-02-23')
+    expect(all).toHaveLength(70 * 5)
   })
 
   it('uses a different cycle offset per member', async () => {
@@ -40,5 +40,10 @@ describe('createDemoSource', () => {
     const r = await createDemoSource(NOW).shifts({ from: '2026-03-17', to: '2026-03-18' })
     expect(r).toHaveLength(2 * 5)
     expect(r.every((s) => ['2026-03-17', '2026-03-18'].includes(s.id.split(':')[1]))).toBe(true)
+  })
+
+  it('has shifts on every day of the current month', async () => {
+    const days = new Set((await createDemoSource(NOW).shifts({ from: '2026-03-01', to: '2026-03-31' })).map((s) => s.id.split(':')[1]))
+    expect(days.size).toBe(31)
   })
 })

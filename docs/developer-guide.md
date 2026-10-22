@@ -11,7 +11,7 @@ grid with the head count per day. It has two modes that share the same screens:
 
 | Mode | Data | Needs |
 |------|------|-------|
-| **Demo** | In memory: five sample members, an 8-week rotation | Nothing |
+| **Demo** | In memory: five sample members, a 10-week rotation starting the week of the 1st of the current month | Nothing |
 | **Signed in** | Supabase (Postgres + Auth): accounts, groups, invitations, shifts assigned by the group manager | `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` |
 
 There is no server of our own. The app is a static site; the database enforces the access rules.
