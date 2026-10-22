@@ -20,6 +20,6 @@ Hand-written effects risk stale responses overwriting newer ones and setState-in
 ## Consequences
 - Reload after writes: a write can call `reload()` once write methods exist on `DataSource`. Not built yet.
 - Realtime updates: not implemented; they would need a way to trigger `reload` or set data from a subscription.
-  Details arrive with Plan 2.
+  Not designed yet.
 - No caching, deduplication or optimistic updates; the same data is fetched again per consumer.
   Revisit if more pages share data, or adopt a query library at that point.

@@ -24,4 +24,4 @@ Time-dependent behaviour (midnight rollover) is easy to break and slow to check 
 - Axe finds only part of the accessibility problems; keyboard and screen-reader checks stay manual.
 - E2E needs a build, so it is slower than unit tests; keep it to a few flows.
 - The a11y list `PAGES` in `e2e/a11y.spec.ts` is maintained by hand and uses Italian labels. New pages must be added.
-- CI wiring is not verified.
+- CI (`.github/workflows/deploy.yml`) runs `npm test` and `npm run build` before deploying; it does not run the E2E tests or lint.

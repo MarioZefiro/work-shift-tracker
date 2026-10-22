@@ -22,7 +22,11 @@ Everything below is in `src/` today.
 - Five interface languages: Italian, English, French, Spanish, German. The choice is stored in `localStorage`; otherwise the browser language is used. The French, Spanish and German translations have not been reviewed by native speakers.
 - "Today" follows the group's time zone (`Europe/Rome`), not the browser's, and the home date updates at midnight.
 - Accessibility basics: skip link, focus moves to the main area on navigation, labelled lists and table cells, `aria-current` on the active page and day.
-- Signed-in mode (needs Supabase, see [Run with Supabase](#run-with-supabase)): sign in with a link sent by email, no password; create groups and switch between them; share a single-use invitation link (valid 7 days, up to 30 members); the group manager assigns or deletes a member's shift, or generates a rotation of three eight-hour shifts for the people picked.
+- Signed-in mode (needs Supabase, see [Run with Supabase](#run-with-supabase)):
+  - sign in with a link sent by email, no password;
+  - create groups and switch between them;
+  - share a single-use invitation link (valid 7 days, up to 30 members);
+  - the group manager assigns or deletes a member's shift, or generates a rotation of three eight-hour shifts for the people picked.
 
 The live site is built with the Supabase URL and publishable key, so it offers both the demo and signed-in mode. It is deployed to GitHub Pages by `.github/workflows/deploy.yml` on every push to `main`, after `npm test` passes.
 
@@ -56,7 +60,7 @@ No router, i18n or UI library. The reasoning is in `docs/adr/`.
 ### 1. Pages talk to a `DataSource` interface, not to data
 
 Pages depend on the `DataSource` interface (`src/data/DataSource.ts`): `userId`, `group()` and `shifts({ from, to })`. The demo implements it in memory and returns promises, so loading and error states behave like a network source. Supabase is a second implementation of the same interface (`src/data/supabase/supabaseSource.ts`), built for one group and one user.
-Rejected: building pages against a hard-coded fixture. Every page would need rewriting when real data arrives. Cost of my choice: the interface stayed read-only when Supabase arrived, so the writes (assigning shifts, invitations) live in separate modules instead of on the interface. See `docs/adr/0001-datasource-interface-demo-first.md`.
+Rejected: building pages against a hard-coded fixture. Every page would need rewriting when real data arrives. Cost: the interface stayed read-only when Supabase arrived, so the writes (assigning shifts, invitations) live in separate modules instead of on the interface. See `docs/adr/0001-datasource-interface-demo-first.md`.
 
 ### 2. Dates are UTC instants plus the group's IANA zone, with explicit errors
 
@@ -107,7 +111,7 @@ Then `npm run dev` and open `http://localhost:5173/work-shift-tracker/`. The sig
 
 Only the publishable key belongs in the browser. A secret or `service_role` key must never go in a `VITE_` variable: it would be public in the built site.
 
-`supabase/config.toml` moves the API port to 54421 (54321 was taken on the author's machine) and allows the sign-in link to return to `http://localhost:5173/work-shift-tracker/`. A hosted project needs its own redirect URL in the dashboard (Authentication, URL Configuration).
+`supabase/config.toml` moves the API port to 54421 (54321 was taken on my machine) and allows the sign-in link to return to `http://localhost:5173/work-shift-tracker/`. A hosted project needs its own redirect URL in the dashboard (Authentication, URL Configuration).
 
 ## Tests
 
@@ -117,4 +121,4 @@ npm run test:e2e  # playwright test: builds the app, serves it on port 4173
 npx supabase test db  # pgTAP: access rules and the group and invitation functions (needs the local stack)
 ```
 
-The end-to-end tests run an axe accessibility check on the landing page and all five pages, and a midnight rollover check using a fake clock. They need the Playwright browsers installed (`npx playwright install`).
+The end-to-end tests run an axe accessibility check on the landing page and all five pages, and a midnight rollover check using a fake clock. They run with the Italian locale and need the Playwright browsers installed (`npx playwright install`).

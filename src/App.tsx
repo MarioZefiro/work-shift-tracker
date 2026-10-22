@@ -25,7 +25,7 @@ export default function App({ client }: { client: SupabaseClient | null }) {
 
 function AppBody({ client }: { client: SupabaseClient | null }) {
   const { t } = useI18n()
-  // Piano 2 groups all use Europe/Rome (the column default); a per-group zone needs the group loaded first.
+  // Signed-in groups all use Europe/Rome (the column default); a per-group zone needs the group loaded first.
   const now = useNow(TIME_ZONE)
   const auth = useAuth()
   const { name: route, params } = useRoute()

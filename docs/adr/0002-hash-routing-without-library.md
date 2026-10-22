@@ -4,9 +4,8 @@
 Accepted
 
 ## Context
-The app has five top-level pages and no nested layouts. The static site may be hosted on GitHub Pages
-(`CLAUDE.md` lists it or Vercel; the actual deploy setup is not verified), which cannot rewrite unknown
-paths to `index.html`.
+The app has seven flat routes and no nested layouts. The static site is deployed to GitHub Pages
+(`.github/workflows/deploy.yml`), which cannot rewrite unknown paths to `index.html`.
 
 ## Decision
 `src/app/useRoute.ts` reads `window.location.hash` with `useSyncExternalStore` and the `hashchange` event.
@@ -14,7 +13,7 @@ paths to `index.html`.
 - The hash is split on `/`; the first segment is the route, the remaining segments are `params`.
 - Unknown or empty hashes fall back to `home`.
 - The snapshot is the raw hash string (a stable primitive); the `{ name, params }` object is memoised from it.
-- No router dependency. `src/App.tsx` switches on the route name.
+- No router dependency. `src/GroupPages.tsx` renders the page for the route name; an `invite` route, or `manage` in the demo, falls back to home.
 
 ## Consequences
 - The part after `#` is never sent to the server, so deep links and reloads work on any static host with

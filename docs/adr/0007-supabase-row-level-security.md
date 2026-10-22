@@ -4,7 +4,7 @@
 Accepted
 
 ## Context
-Plan 2 needs accounts, groups and shifts shared between people, without a server of our own. Shifts are
+The signed-in mode needs accounts, groups and shifts shared between people, without a server of our own. Shifts are
 personal data and the app is a static site, so the browser cannot be trusted to enforce any rule: whatever
 the client sends, the database must refuse what the user may not do.
 
