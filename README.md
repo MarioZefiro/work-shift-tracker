@@ -19,7 +19,7 @@ Everything below is in `src/` today.
 - Profile: name, role and group of the demo user.
 - Settings: language picker, the group's time zone, and a button to leave the demo.
 - FAQ page.
-- Five interface languages: Italian, English, French, Spanish, German. The choice is stored in `localStorage`; otherwise the browser language is used.
+- Five interface languages: Italian, English, French, Spanish, German. The choice is stored in `localStorage`; otherwise the browser language is used. The French, Spanish and German translations have not been reviewed by native speakers.
 - "Today" follows the group's time zone (`Europe/Rome`), not the browser's, and the home date updates at midnight.
 - Accessibility basics: skip link, focus moves to the main area on navigation, labelled lists and table cells, `aria-current` on the active page and day.
 - Signed-in mode (needs Supabase, see [Run with Supabase](#run-with-supabase)): sign in with a link sent by email, no password; create groups and switch between them; share a single-use invitation link (valid 7 days, up to 30 members); the group manager assigns or deletes a member's shift, or generates a rotation of three eight-hour shifts for the people picked.
