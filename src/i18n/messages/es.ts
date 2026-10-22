@@ -108,8 +108,8 @@ export const es: Messages = {
   'faq.title': 'Preguntas frecuentes',
   'faq.q1': '¿Qué es esta aplicación?',
   'faq.a1':
-    'Un calendario de turnos compartido por el grupo: muestra quién trabaja hoy, tus próximos turnos y el mes. Esto es una demo con datos de ejemplo inventados.',
+    "Un calendario de turnos compartido por el grupo: muestra quién trabaja hoy, tus próximos turnos y el mes. En la demo los datos son de ejemplo inventados.",
   'faq.q2': '¿Dónde están mis datos?',
   'faq.a2':
-    'En esta demo los datos son de ejemplo y se generan en tu navegador: no salen de tu dispositivo y no hay ninguna cuenta.',
+    "En la demo, los datos de ejemplo se generan en tu navegador y no hay ninguna cuenta. Al iniciar sesión, los turnos se guardan en la base de datos del grupo y solo los ven los miembros del grupo.",
 }

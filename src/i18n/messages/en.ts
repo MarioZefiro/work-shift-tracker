@@ -108,8 +108,8 @@ export const en: Messages = {
   'faq.title': 'Frequently asked questions',
   'faq.q1': 'What is this app?',
   'faq.a1':
-    "A shift calendar shared by the group: it shows who works today, your next shifts and the month. This is a demo with invented sample data.",
+    "A shift calendar shared by the group: it shows who works today, your next shifts and the month. In the demo the data is invented sample data.",
   'faq.q2': 'Where is my data stored?',
   'faq.a2':
-    'In this demo the data is sample data generated in your browser: it never leaves your device and there is no account.',
+    "In the demo, sample data is generated in your browser and there is no account. Once signed in, shifts are stored in the group's database and only group members can see them.",
 }

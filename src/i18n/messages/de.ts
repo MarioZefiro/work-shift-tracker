@@ -108,8 +108,8 @@ export const de: Messages = {
   'faq.title': 'Häufige Fragen',
   'faq.q1': 'Was ist diese App?',
   'faq.a1':
-    'Ein gemeinsamer Schichtkalender für die Gruppe: Er zeigt, wer heute arbeitet, deine nächsten Schichten und den Monat. Dies ist eine Demo mit erfundenen Beispieldaten.',
+    "Ein gemeinsamer Schichtkalender für die Gruppe: Er zeigt, wer heute arbeitet, deine nächsten Schichten und den Monat. In der Demo sind die Daten erfundene Beispieldaten.",
   'faq.q2': 'Wo liegen meine Daten?',
   'faq.a2':
-    'In dieser Demo sind die Daten Beispieldaten und werden in deinem Browser erzeugt: Sie verlassen dein Gerät nicht und es gibt kein Konto.',
+    "In der Demo werden Beispieldaten in deinem Browser erzeugt und es gibt kein Konto. Nach der Anmeldung werden die Schichten in der Datenbank der Gruppe gespeichert und nur Gruppenmitglieder sehen sie.",
 }

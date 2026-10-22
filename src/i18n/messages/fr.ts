@@ -109,8 +109,8 @@ export const fr: Messages = {
   'faq.title': 'Questions fréquentes',
   'faq.q1': 'Qu’est-ce que cette application ?',
   'faq.a1':
-    'Un calendrier des services partagé par le groupe : il montre qui travaille aujourd’hui, tes prochains services et le mois. Ceci est une démo avec des données d’exemple inventées.',
+    "Un calendrier des services partagé par le groupe : il montre qui travaille aujourd’hui, tes prochains services et le mois. Dans la démo, les données sont des exemples inventés.",
   'faq.q2': 'Où sont mes données ?',
   'faq.a2':
-    'Dans cette démo, les données sont des exemples générés dans ton navigateur : elles ne quittent pas ton appareil et il n’y a aucun compte.',
+    "Dans la démo, les données d’exemple sont générées dans ton navigateur et il n’y a aucun compte. Une fois connecté, les services sont enregistrés dans la base de données du groupe et seuls les membres du groupe les voient.",
 }

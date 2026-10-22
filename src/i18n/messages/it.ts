@@ -115,10 +115,10 @@ export const it = {
   'faq.title': 'Domande frequenti',
   'faq.q1': "Che cos'è quest'app?",
   'faq.a1':
-    'Un calendario dei turni condiviso dal gruppo: mostra chi lavora oggi, i tuoi prossimi turni e il mese. Questa è una demo con dati di esempio inventati.',
+    "Un calendario dei turni condiviso dal gruppo: mostra chi lavora oggi, i tuoi prossimi turni e il mese. Nella demo i dati sono di esempio inventati.",
   'faq.q2': 'Dove stanno i miei dati?',
   'faq.a2':
-    'In questa demo i dati sono di esempio e vengono generati nel tuo browser: non lasciano il tuo dispositivo e non c’è nessun account.',
+    "Nella demo i dati di esempio vengono generati nel tuo browser e non c’è nessun account. Dopo l’accesso i turni sono salvati nel database del gruppo e li vedono solo i membri del gruppo.",
 } satisfies Record<string, Entry>
 
 export type MessageKey = keyof typeof it
