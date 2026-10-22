@@ -1,8 +1,9 @@
+import { useState } from 'react'
 import { useAsync } from '../app/useAsync'
 import type { DataSource } from '../data/DataSource'
 import { useI18n } from '../i18n/I18nContext'
 import { cap, formatShift, utcFormatter } from '../lib/format'
-import { todayView, workingCountByDate } from '../lib/home'
+import { rosterByDate, todayView, workingCountByDate } from '../lib/home'
 import { isRest } from '../lib/shift'
 import { localDateIn } from '../lib/time'
 import type { Shift } from '../lib/types'
@@ -22,6 +23,8 @@ export function HomePage({ source, now }: { source: DataSource; now: Date }) {
     const shifts = await source.shifts({ from: `${today.slice(0, 7)}-01`, to })
     return { group, shifts }
   }, [source, now])
+
+  const [selected, setSelected] = useState<string | null>(null)
 
   if (!data) {
     return <LoadState failed={status === 'error'} errorMessage={t('error.shifts')} onRetry={reload} tall />
@@ -43,6 +46,8 @@ export function HomePage({ source, now }: { source: DataSource; now: Date }) {
     members: group.members,
   })
   const dateOf = (s: Shift) => localDateIn(new Date(s.startsAt), group.timeZone)
+  const roster = rosterByDate(shifts, group.members, group.timeZone)
+  const dayList = selected ? roster[selected] : undefined
 
   return (
     <div className="home">
@@ -81,9 +86,26 @@ export function HomePage({ source, now }: { source: DataSource; now: Date }) {
         <MiniMonth
           today={today}
           counts={workingCountByDate(shifts, group.timeZone)}
+          selected={selected}
+          onSelect={(date) => setSelected(selected === date ? null : date)}
           mine={Object.fromEntries(shifts.filter((s) => s.userId === source.userId).map((s) => [dateOf(s), s.code]))}
           hasData={new Set(shifts.map((s) => localDateIn(new Date(s.startsAt), group.timeZone)))}
         />
+        {selected && dayList && (
+          <section className="day-roster" aria-labelledby="day-roster">
+            <h3 id="day-roster">
+              {t('month.dayTitle', { date: dayFmt({ weekday: 'long', day: 'numeric', month: 'long' }).format(asUtc(selected)) })}
+            </h3>
+            <ul className="upcoming">
+              {dayList.map(({ userId, name, shift }) => (
+                <li key={shift.id} data-code={shift.code}>
+                  {name}
+                  {userId === source.userId && ` (${t('month.you')})`}: {describe(shift)}
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
       </section>
     </div>
   )

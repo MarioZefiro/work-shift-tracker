@@ -8,9 +8,11 @@ interface Props {
   counts: Record<string, number>
   hasData: ReadonlySet<string> // dates with any shift, rest included
   mine: Record<string, ShiftCode> // the signed-in user's shift code per date
+  selected: string | null
+  onSelect: (date: string) => void
 }
 
-export function MiniMonth({ today, counts, hasData, mine }: Props) {
+export function MiniMonth({ today, counts, hasData, mine, selected, onSelect }: Props) {
   const { locale, t } = useI18n()
   const [year, month] = today.split('-').map(Number)
   const fmt = (opts: Intl.DateTimeFormatOptions) => utcFormatter(locale, opts)
@@ -42,13 +44,9 @@ export function MiniMonth({ today, counts, hasData, mine }: Props) {
               const known = hasData.has(date)
               const own = mine[date]
               const when = dayLabel.format(new Date(Date.UTC(year, month - 1, day)))
-              return (
-                <td
-                  key={j}
-                  aria-label={`${when}, ${known ? t('month.working', { count: n }) : t('month.noData')}${own ? `, ${t('month.yours', { shift: t(`shift.${own}`) })}` : ''}`}
-                  aria-current={date === today ? 'date' : undefined}
-                  data-level={known ? Math.min(n, 4) : 0}
-                >
+              const label = `${when}, ${known ? t('month.working', { count: n }) : t('month.noData')}${own ? `, ${t('month.yours', { shift: t(`shift.${own}`) })}` : ''}`
+              const face = (
+                <>
                   <div className="day-top" aria-hidden="true">
                     {day}
                     {own && (
@@ -58,6 +56,22 @@ export function MiniMonth({ today, counts, hasData, mine }: Props) {
                     )}
                   </div>
                   <span aria-hidden="true">{known ? n : '–'}</span>
+                </>
+              )
+              return (
+                <td
+                  key={j}
+                  aria-label={known ? undefined : label}
+                  aria-current={date === today ? 'date' : undefined}
+                  data-level={known ? Math.min(n, 4) : 0}
+                >
+                  {known ? (
+                    <button type="button" className="day" aria-label={label} aria-pressed={selected === date} onClick={() => onSelect(date)}>
+                      {face}
+                    </button>
+                  ) : (
+                    <div className="day">{face}</div>
+                  )}
                 </td>
               )
             })}

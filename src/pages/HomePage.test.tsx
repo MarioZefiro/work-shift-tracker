@@ -129,3 +129,24 @@ test('a month day names my own shift, not only the head count', async () => {
   const table = await screen.findByRole('table', { name: 'ottobre 2026' })
   expect(within(table).getByLabelText('22 ottobre, 1 in servizio, tuo turno: Pomeriggio')).toHaveTextContent('P')
 })
+
+test('selecting a month day lists who works, selecting it again hides the list', async () => {
+  renderWithI18n(<HomePage source={source([...base, shift('a', 22, 'M'), shift('b', 22, 'R')])} now={NOW} />)
+  const day = await screen.findByRole('button', { name: /^22 ottobre/ })
+  expect(screen.queryByRole('heading', { name: /chi lavora/ })).not.toBeInTheDocument()
+  fireEvent.click(day)
+  expect(day).toHaveAttribute('aria-pressed', 'true')
+  const list = within(screen.getByRole('region', { name: /giovedì 22 ottobre: chi lavora/i }))
+  expect(list.getByText('Luca (tu): Pomeriggio 14:00–22:00')).toBeInTheDocument()
+  expect(list.getByText('Anna: Mattina 06:00–14:00')).toBeInTheDocument()
+  expect(list.getByText('Marco: Riposo')).toBeInTheDocument()
+  fireEvent.click(day)
+  expect(day).toHaveAttribute('aria-pressed', 'false')
+  expect(screen.queryByRole('heading', { name: /chi lavora/ })).not.toBeInTheDocument()
+})
+
+test('a month day without data is not a button', async () => {
+  renderWithI18n(<HomePage source={source(base)} now={NOW} />)
+  await screen.findByRole('table')
+  expect(screen.queryByRole('button', { name: /^1 ottobre/ })).not.toBeInTheDocument()
+})

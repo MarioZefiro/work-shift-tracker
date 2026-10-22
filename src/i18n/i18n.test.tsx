@@ -108,7 +108,7 @@ test('plural forms follow the locale', () => {
 })
 
 test('mini month labels pluralise per locale and flag days without data', () => {
-  const props = { today: '2026-10-19', counts: { '2026-10-19': 1, '2026-10-20': 4 }, hasData: new Set(['2026-10-19', '2026-10-20']), mine: { '2026-10-20': 'P' as const } }
+  const props = { today: '2026-10-19', counts: { '2026-10-19': 1, '2026-10-20': 4 }, hasData: new Set(['2026-10-19', '2026-10-20']), mine: { '2026-10-20': 'P' as const }, selected: null, onSelect: () => {} }
   renderWithI18n(<MiniMonth {...props} />, { locale: 'en' })
   expect(screen.getByLabelText('October 19, 1 person on duty')).toBeInTheDocument()
   expect(screen.getByLabelText('October 20, 4 people on duty, your shift: Afternoon')).toBeInTheDocument()
