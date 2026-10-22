@@ -117,6 +117,15 @@ Hash routing without a library (`src/app/useRoute.ts`, ADR 0002). Routes: `home`
 `settings`, `faq`, `invite`, `manage`. An unknown hash is `home`. Only `#/invite/<code>` uses `params`. The
 hash never reaches the server, so deep links work on any static host.
 
+### 4.4b Home month grid
+
+`MiniMonth` shows, per day, the head count and the signed-in user's own shift as a letter chip (M/P/N/R). The
+chip uses the page surface and text colour with a border in the shift colour, so its contrast does not depend
+on the heat level (`[data-level]` shades). Days with data are `<button aria-pressed>`; the others stay plain.
+Selection state lives in `HomePage`: choosing a day renders a list below the grid (`rosterByDate` in
+`src/lib/home.ts`: every member's shift per local date, rest included, sorted by start then name); choosing it
+again hides it. Nothing is selected on load, because the "today" card already names who works your shift.
+
 ### 4.5 Dates and time zones
 
 Shifts are stored as UTC instants. Local times are derived with `Intl` in the group's IANA zone
