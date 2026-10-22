@@ -59,12 +59,18 @@ supabase/
   tests/                pgTAP
 e2e/                    Playwright: accessibility (axe) and midnight rollover
 docs/adr/               Architecture decision records
-public/                 Static files: favicon, apple-touch-icon, home.png (landing preview), landing.png (og:image)
+public/                 Static files: favicon, apple-touch-icon, preview-<locale>.png (landing previews), landing.png (og:image)
 ```
 
 `index.html` carries the `theme-color` (light and dark), Open Graph and `apple-touch-icon` tags. `og:image` must be an
-absolute URL, so it hardcodes the GitHub Pages address; `home.png` and `landing.png` in `public/` are copies of
-`docs/screenshots/`, so retake both together.
+absolute URL, so it hardcodes the GitHub Pages address; `public/landing.png` is a copy of
+`docs/screenshots/landing.png`, so retake both together.
+
+The landing shows `preview-<locale>.png` for the current language (`it`, `en`, `fr`, `es`, `de`). To retake them, build
+and run `npm run preview`, then for each locale set `localStorage.locale`, load the page at 390px wide with light colors
+and reduced motion, click the demo button, wait for the month table and take a full-page screenshot. The images differ in
+height because the text wraps per language: update `PREVIEW_HEIGHT` in `src/pages/LandingPage.tsx` to the new sizes.
+Retake `landing.png` last, in Italian, since it contains the Italian preview.
 
 Unit and component tests sit next to the code (`*.test.ts(x)`).
 
