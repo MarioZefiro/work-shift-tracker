@@ -84,8 +84,8 @@ test('the mini month is a table with a caption and labelled days', async () => {
   const others = [shift('a', 19, 'M'), shift('b', 19, 'M'), shift('b', 20, 'R')]
   renderWithI18n(<HomePage source={source([...base, ...others])} now={NOW} />)
   const table = await screen.findByRole('table', { name: 'ottobre 2026' })
-  expect(within(table).getByLabelText('19 ottobre, 2 in servizio')).toBeInTheDocument()
-  expect(within(table).getByLabelText('20 ottobre, 1 in servizio, tuo turno: Mattina')).toBeInTheDocument()
+  expect(within(table).getByRole('button', { name: '19 ottobre, 2 in servizio' })).toBeInTheDocument()
+  expect(within(table).getByRole('button', { name: '20 ottobre, 1 in servizio, tuo turno: Mattina' })).toBeInTheDocument()
 })
 
 test('ignores a superseded load that resolves last', async () => {
@@ -127,7 +127,7 @@ test.each([
 test('a month day names my own shift, not only the head count', async () => {
   renderWithI18n(<HomePage source={source(base)} now={NOW} />)
   const table = await screen.findByRole('table', { name: 'ottobre 2026' })
-  expect(within(table).getByLabelText('22 ottobre, 1 in servizio, tuo turno: Pomeriggio')).toHaveTextContent('P')
+  expect(within(table).getByRole('button', { name: '22 ottobre, 1 in servizio, tuo turno: Pomeriggio' })).toHaveTextContent('P')
 })
 
 test('selecting a month day lists who works, selecting it again hides the list', async () => {

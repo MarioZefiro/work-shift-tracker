@@ -66,7 +66,9 @@ export function MiniMonth({ today, counts, hasData, mine, selected, onSelect }: 
                   data-level={known ? Math.min(n, 4) : 0}
                 >
                   {known ? (
-                    <button type="button" className="day" aria-label={label} aria-pressed={selected === date} onClick={() => onSelect(date)}>
+                    <button type="button" className="day" aria-pressed={selected === date} onClick={() => onSelect(date)}>
+                      {/* Real text, not aria-label: the name must contain the visible text (WCAG 2.5.3). */}
+                      <span className="visually-hidden">{label}</span>
                       {face}
                     </button>
                   ) : (
