@@ -1,14 +1,18 @@
 import { useI18n } from '../i18n/I18nContext'
 import { cap, utcFormatter } from '../lib/format'
 import { buildMonth } from '../lib/home'
+import type { ShiftCode } from '../lib/types'
 
 interface Props {
   today: string // YYYY-MM-DD in the group's time zone
   counts: Record<string, number>
   hasData: ReadonlySet<string> // dates with any shift, rest included
+  mine: Record<string, ShiftCode> // the signed-in user's shift code per date
+  selected: string | null
+  onSelect: (date: string) => void
 }
 
-export function MiniMonth({ today, counts, hasData }: Props) {
+export function MiniMonth({ today, counts, hasData, mine, selected, onSelect }: Props) {
   const { locale, t } = useI18n()
   const [year, month] = today.split('-').map(Number)
   const fmt = (opts: Intl.DateTimeFormatOptions) => utcFormatter(locale, opts)
@@ -38,16 +42,38 @@ export function MiniMonth({ today, counts, hasData }: Props) {
               const day = Number(date.slice(8))
               const n = counts[date] ?? 0
               const known = hasData.has(date)
+              const own = mine[date]
               const when = dayLabel.format(new Date(Date.UTC(year, month - 1, day)))
+              const label = `${when}, ${known ? t('month.working', { count: n }) : t('month.noData')}${own ? `, ${t('month.yours', { shift: t(`shift.${own}`) })}` : ''}`
+              const face = (
+                <>
+                  <div className="day-top" aria-hidden="true">
+                    {day}
+                    {own && (
+                      <span className="day-mark" data-code={own}>
+                        {own}
+                      </span>
+                    )}
+                  </div>
+                  <span aria-hidden="true">{known ? n : '–'}</span>
+                </>
+              )
               return (
                 <td
                   key={j}
-                  aria-label={`${when}, ${known ? t('month.working', { count: n }) : t('month.noData')}`}
+                  aria-label={known ? undefined : label}
                   aria-current={date === today ? 'date' : undefined}
                   data-level={known ? Math.min(n, 4) : 0}
                 >
-                  {day}
-                  <span aria-hidden="true">{known ? n : '–'}</span>
+                  {known ? (
+                    <button type="button" className="day" aria-pressed={selected === date} onClick={() => onSelect(date)}>
+                      {/* Real text, not aria-label: the name must contain the visible text (WCAG 2.5.3). */}
+                      <span className="visually-hidden">{label}</span>
+                      {face}
+                    </button>
+                  ) : (
+                    <div className="day">{face}</div>
+                  )}
                 </td>
               )
             })}

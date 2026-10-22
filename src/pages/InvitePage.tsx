@@ -44,7 +44,7 @@ export function InvitePage({
     return (
       <main className="page">
         <h1>{t('invite.title')}</h1>
-        <p role="alert">{t('invite.invalid')}</p>
+        <p role="alert" className="error">{t('invite.invalid')}</p>
         <button type="button" className="button" onClick={onDecline}>
           {t('invite.back')}
         </button>
@@ -68,7 +68,7 @@ export function InvitePage({
           {t('invite.decline')}
         </button>
       </div>
-      {problem && <p role="alert">{t(PROBLEM_TEXT[problem])}</p>}
+      {problem && <p role="alert" className="error">{t(PROBLEM_TEXT[problem])}</p>}
     </main>
   )
 }

@@ -26,3 +26,12 @@ for (const name of PAGES) {
     await expectNoViolations(page)
   })
 }
+
+test('Home with a month day selected has no accessibility violations', async ({ page }) => {
+  await page.goto('/')
+  await page.getByRole('button', { name: 'Prova la demo' }).click()
+  const day = page.locator('button.day').first()
+  await day.click()
+  await expect(day).toHaveAttribute('aria-pressed', 'true')
+  await expectNoViolations(page)
+})

@@ -11,7 +11,7 @@ grid with the head count per day. It has two modes that share the same screens:
 
 | Mode | Data | Needs |
 |------|------|-------|
-| **Demo** | In memory: five sample members, an 8-week rotation | Nothing |
+| **Demo** | In memory: five sample members, a 10-week rotation starting the week of the 1st of the current month | Nothing |
 | **Signed in** | Supabase (Postgres + Auth): accounts, groups, invitations, shifts assigned by the group manager | `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` |
 
 There is no server of our own. The app is a static site; the database enforces the access rules.
@@ -59,7 +59,12 @@ supabase/
   tests/                pgTAP
 e2e/                    Playwright: accessibility (axe) and midnight rollover
 docs/adr/               Architecture decision records
+public/                 Static files: favicon, apple-touch-icon, home.png (landing preview), landing.png (og:image)
 ```
+
+`index.html` carries the `theme-color` (light and dark), Open Graph and `apple-touch-icon` tags. `og:image` must be an
+absolute URL, so it hardcodes the GitHub Pages address; `home.png` and `landing.png` in `public/` are copies of
+`docs/screenshots/`, so retake both together.
 
 Unit and component tests sit next to the code (`*.test.ts(x)`).
 
@@ -112,6 +117,15 @@ Hash routing without a library (`src/app/useRoute.ts`, ADR 0002). Routes: `home`
 `settings`, `faq`, `invite`, `manage`. An unknown hash is `home`. Only `#/invite/<code>` uses `params`. The
 hash never reaches the server, so deep links work on any static host.
 
+### 4.4b Home month grid
+
+`MiniMonth` shows, per day, the head count and the signed-in user's own shift as a letter chip (M/P/N/R). The
+chip uses the page surface and text colour with a border in the shift colour, so its contrast does not depend
+on the heat level (`[data-level]` shades). Days with data are `<button aria-pressed>`; the others stay plain.
+Selection state lives in `HomePage`: choosing a day renders a list below the grid (`rosterByDate` in
+`src/lib/home.ts`: every member's shift per local date, rest included, sorted by start then name); choosing it
+again hides it. Nothing is selected on load, because the "today" card already names who works your shift.
+
 ### 4.5 Dates and time zones
 
 Shifts are stored as UTC instants. Local times are derived with `Intl` in the group's IANA zone
@@ -127,6 +141,18 @@ not the browser's. See ADR 0003 and `src/lib/*.test.ts`. If you touch date code,
 - Messages live in `src/i18n/messages/`. `it.ts` defines the keys (`MessageKey`); the other four locales must
   provide the same keys. FR, ES and DE are not native-reviewed (see README).
 - A top-level `ErrorBoundary` catches render errors.
+
+### 4.7 Forms and feedback
+
+- Submit buttons run their request through `usePending()` (`src/app/usePending.ts`) and are `disabled` while it
+  runs, so a double tap cannot post twice.
+- Success is announced in one always-mounted `<p role="status">` per screen (a live region that appears together
+  with its text is not announced). Failures use `<p role="alert" className="error">`; `.notice` is the same box
+  for information. Border and icon carry the meaning, not colour alone.
+- Deleting a shift takes two clicks (Confirm / Cancel inline, Escape cancels); focus returns to the Delete
+  button on cancel and to the list heading after a delete. Use the same pattern for any new destructive action.
+- Field borders use `--field` (at least 3:1 against the page). The dark block redefines `--purple` so the Night
+  marker stays visible on `--surface`.
 
 ## 5. Backend (Supabase)
 
@@ -228,10 +254,15 @@ Do these once per project, in this order:
 |-------|------|-------|--------|
 | Logic and components | Vitest + Testing Library | next to the code | dates, rotation, storage, auth, pages with real behaviour |
 | Access rules and functions | pgTAP | `supabase/tests/` | RLS, grants, label and time zone checks, the four functions |
-| End to end | Playwright + axe | `e2e/` | accessibility of every page, midnight rollover with a fake clock |
+| End to end | Playwright + axe | `e2e/` | accessibility of the landing, the demo pages and Home with a month day selected (real colors, so contrast is checked here), midnight rollover with a fake clock |
 
 Component tests clean up in the shared `src/test-setup.ts`. Test logic that matters (calculations, storage,
 rules), not every component. See ADR 0005.
+
+The screens that need a Supabase client are not in the e2e build, so `src/pages/a11y.test.tsx` runs axe-core in jsdom
+on them (login with error and "check your email", manage with the delete confirmation, groups with the invite link,
+invite with accept error and invalid invite) through `expectNoA11yViolations` in `src/test-axe.ts`. jsdom has no
+layout, so that helper skips `color-contrast`; contrast for these screens is not covered by a test.
 
 ## 8. Conventions
 

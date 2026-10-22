@@ -7,7 +7,8 @@ import type { DataSource } from './DataSource'
 export const TIME_ZONE = 'Europe/Rome'
 export const DEMO_GROUP_ID = 'demo-group'
 export const DEMO_USER_ID = 'demo-luca'
-const WEEKS = 8
+// Enough to cover the whole current month plus the first days of the next.
+const WEEKS = 10
 // Distinct rotations so members are never all on the same shift.
 const OFFSETS = [0, 2, 4, 6, 1]
 
@@ -25,7 +26,8 @@ function mondayOf(date: string): string {
 }
 
 export function createDemoSource(now: Date): DataSource {
-  const startDate = mondayOf(localDateIn(now, TIME_ZONE))
+  // The Monday on or before the 1st, so the month grid is full from day 1.
+  const startDate = mondayOf(`${localDateIn(now, TIME_ZONE).slice(0, 7)}-01`)
   const group: Group = {
     id: DEMO_GROUP_ID,
     name: 'Reparto demo',

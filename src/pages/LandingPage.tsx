@@ -27,7 +27,13 @@ export function LandingPage({
       <p className="hint" role="note">
         {t('landing.notice')}
       </p>
-      <LanguageSelect />
+      <img
+        className="landing-preview"
+        src={`${import.meta.env.BASE_URL}home.png`}
+        alt={t('landing.preview')}
+        width="390"
+        height="944"
+      />
       <button type="button" className="button" onClick={onStart}>
         {t('landing.start')}
       </button>
@@ -36,6 +42,9 @@ export function LandingPage({
           {t('landing.login')}
         </button>
       )}
+      <footer className="landing-footer">
+        <LanguageSelect />
+      </footer>
     </main>
   )
 }

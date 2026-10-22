@@ -1,4 +1,5 @@
 import { useId, useState, type FormEvent } from 'react'
+import { usePending } from '../app/usePending'
 import { ShiftConflictError } from '../data/supabase/shiftsAdmin'
 import type { useI18n } from '../i18n/I18nContext'
 import { MAX_WEEKS, ROTATION_PATTERN, generateRotation, rotationCodes } from '../lib/rotation'
@@ -15,6 +16,7 @@ export function RotationForm({
   today,
   shifts,
   onGenerate,
+  onDone,
   reload,
   t,
 }: {
@@ -24,6 +26,7 @@ export function RotationForm({
   today: string
   shifts: Shift[]
   onGenerate: (shifts: Shift[]) => Promise<void>
+  onDone: (message: string) => void
   reload: () => void
   t: ReturnType<typeof useI18n>['t']
 }) {
@@ -33,6 +36,7 @@ export function RotationForm({
   // Missing = not part of the rotation. The default is nobody: nothing is generated unless someone is picked.
   const [positions, setPositions] = useState<Record<string, number>>({})
   const [failure, setFailure] = useState<Failure | null>(null)
+  const [pending, run] = usePending()
   const picked = group.members.filter((m) => positions[m.id] !== undefined)
   const dayOf = (s: Shift) => localDateIn(new Date(s.startsAt), group.timeZone)
 
@@ -43,6 +47,7 @@ export function RotationForm({
   async function generate(e: FormEvent) {
     e.preventDefault()
     setFailure(null)
+    onDone('')
     if (picked.length === 0) return setFailure('none')
     let rows: Shift[]
     try {
@@ -59,13 +64,16 @@ export function RotationForm({
     // Checked against the loaded period; the schema's unique key catches an exact duplicate anywhere else.
     const clash = rows.find((r) => shifts.some((s) => s.userId === r.userId && dayOf(s) === dayOf(r)))
     if (clash) return setFailure({ conflict: group.members.find((m) => m.id === clash.userId)?.name ?? clash.userId })
-    try {
-      await onGenerate(rows)
-      reload()
-    } catch (error) {
-      // Days the list did not show: the schema's unique key refused the whole batch.
-      setFailure(error instanceof ShiftConflictError ? 'clash' : 'error')
-    }
+    await run(async () => {
+      try {
+        await onGenerate(rows)
+        onDone(t('manage.rotation.done'))
+        reload()
+      } catch (error) {
+        // Days the list did not show: the schema's unique key refused the whole batch.
+        setFailure(error instanceof ShiftConflictError ? 'clash' : 'error')
+      }
+    })
   }
 
   return (
@@ -93,12 +101,12 @@ export function RotationForm({
             </select>
           </label>
         ))}
-        <button type="submit" className="button">
+        <button type="submit" className="button" disabled={pending}>
           {t('manage.rotation.generate')}
         </button>
       </form>
       {failure && (
-        <p role="alert">
+        <p role="alert" className="error">
           {failure === 'none'
             ? t('manage.rotation.none')
             : failure === 'error'

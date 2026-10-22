@@ -15,15 +15,15 @@ The screenshots show the demo. Signed-in mode uses real accounts, so it is not p
 
 Everything below is in `src/` today.
 
-- Landing page with a "Try the demo" button. The demo has five sample members and an 8-week rotation of morning, afternoon, night and rest shifts.
-- Home: today's shift for the demo user, the colleagues on the same shift, upcoming shifts, and a month grid showing how many people work each day.
+- Landing page with a "Try the demo" button. The demo has five sample members and a 10-week rotation of morning, afternoon, night and rest shifts.
+- Home: today's shift for the demo user, the colleagues on the same shift, upcoming shifts, and a month grid with your own shift letter and how many people work each day. Tap a day to see who works and on which shift.
 - People: list of group members with their role.
 - Profile: name, role and group of the demo user.
 - Settings: language picker, the group's time zone, and a button to leave the demo.
 - FAQ page.
 - Five interface languages: Italian, English, French, Spanish, German. The choice is stored in `localStorage`; otherwise the browser language is used. The French, Spanish and German translations have not been reviewed by native speakers.
 - "Today" follows the group's time zone (`Europe/Rome`), not the browser's, and the home date updates at midnight.
-- Accessibility basics: skip link, focus moves to the main area on navigation, labelled lists and table cells, `aria-current` on the active page and day.
+- Accessibility basics: skip link, focus moves to the main area on navigation, labelled lists and table cells, `aria-current` on the active page and day. Lighthouse accessibility scores 100 (mobile and desktop) on the landing and the demo pages; axe runs in the end-to-end tests and on the signed-in screens in the component tests.
 - Signed-in mode (needs Supabase, see [Run with Supabase](#run-with-supabase)):
   - sign in with a link sent by email, no password;
   - create groups and switch between them;

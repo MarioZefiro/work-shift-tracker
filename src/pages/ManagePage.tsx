@@ -1,5 +1,6 @@
-import { useId, useState, type FormEvent } from 'react'
+import { useEffect, useId, useRef, useState, type FormEvent } from 'react'
 import { useAsync } from '../app/useAsync'
+import { usePending } from '../app/usePending'
 import type { DataSource } from '../data/DataSource'
 import { ShiftConflictError } from '../data/supabase/shiftsAdmin'
 import { useI18n } from '../i18n/I18nContext'
@@ -124,6 +125,17 @@ function Form({
   const [date, setDate] = useState(today)
   const [code, setCode] = useState<ShiftCode>(group.shiftTypes[0]?.code ?? 'M')
   const [failure, setFailure] = useState<Failure | null>(null)
+  const [done, setDone] = useState('')
+  // Delete asks twice: the id waiting for its second click.
+  const [confirming, setConfirming] = useState<string | null>(null)
+  const listRef = useRef<HTMLHeadingElement>(null)
+  const cancelledRef = useRef<string | null>(null)
+  // The buttons are swapped, so focus would fall to the page; send it back to where the user was.
+  useEffect(() => {
+    if (confirming === null && cancelledRef.current) document.getElementById(`del-${cancelledRef.current}`)?.focus()
+    cancelledRef.current = null
+  }, [confirming])
+  const [pending, run] = usePending()
   const nameOf = (id: string) => group.members.find((m) => m.id === id)?.name ?? id
   const dayOf = (s: Shift) => localDateIn(new Date(s.startsAt), group.timeZone)
   const dateLabel = (d: string) => cap(utcFormatter(locale, { weekday: 'short', day: 'numeric', month: 'short' }).format(new Date(`${d}T00:00:00Z`)))
@@ -131,25 +143,40 @@ function Form({
   async function assign(e: FormEvent) {
     e.preventDefault()
     setFailure(null)
+    setDone('')
     const clash = { kind: 'conflict' as const, name: nameOf(userId), date: dateLabel(date) }
     // Checked here for a clear message; the schema's unique key is the safety net when the list is stale.
     if (shifts.some((s) => s.userId === userId && dayOf(s) === date)) return setFailure(clash)
-    try {
-      await onAssign(buildShift(userId, code, date, group.timeZone, group.shiftTypes))
-      reload()
-    } catch (error) {
-      setFailure(error instanceof ShiftConflictError ? clash : { kind: 'assign' })
-    }
+    await run(async () => {
+      try {
+        await onAssign(buildShift(userId, code, date, group.timeZone, group.shiftTypes))
+        setDone(t('manage.assign.done'))
+        reload()
+      } catch (error) {
+        setFailure(error instanceof ShiftConflictError ? clash : { kind: 'assign' })
+      }
+    })
+  }
+
+  function cancel(id: string) {
+    cancelledRef.current = id
+    setConfirming(null)
   }
 
   async function remove(id: string) {
     setFailure(null)
-    try {
-      await onDelete(id)
-      reload()
-    } catch {
-      setFailure({ kind: 'delete' })
-    }
+    setDone('')
+    setConfirming(null)
+    await run(async () => {
+      try {
+        await onDelete(id)
+        setDone(t('manage.delete.done'))
+        listRef.current?.focus()
+        reload()
+      } catch {
+        setFailure({ kind: 'delete' })
+      }
+    })
   }
 
   return (
@@ -174,12 +201,14 @@ function Form({
             </option>
           ))}
         </select>
-        <button type="submit" className="button">
+        <button type="submit" className="button" disabled={pending}>
           {t('manage.assign')}
         </button>
       </form>
+      {/* Always in the DOM: screen readers announce changes to a live region, not one that appears with its text. */}
+      <p role="status">{done}</p>
       {failure && (
-        <p role="alert">
+        <p role="alert" className="error">
           {failure.kind === 'conflict'
             ? t('manage.assign.conflict', { name: failure.name, date: failure.date })
             : failure.kind === 'assign'
@@ -187,25 +216,43 @@ function Form({
               : t('manage.delete.error')}
         </p>
       )}
-      <RotationForm group={group} from={from} startMax={startMax} today={today} shifts={shifts} onGenerate={onGenerate} reload={reload} t={t} />
-      <h2>{t('manage.list')}</h2>
+      <RotationForm group={group} from={from} startMax={startMax} today={today} shifts={shifts} onGenerate={onGenerate} onDone={(message) => { setFailure(null); setDone(message) }} reload={reload} t={t} />
+      <h2 tabIndex={-1} ref={listRef}>
+        {t('manage.list')}
+      </h2>
       {shifts.length === 0 && <p>{t('manage.none')}</p>}
       <ul className="shift-list">
         {shifts.map((s) => {
           const type = group.shiftTypes.find((ty) => ty.code === s.code)
+          const who = (
+            <span className="visually-hidden">
+              {' '}
+              — {nameOf(s.userId)}, {dateLabel(dayOf(s))}
+            </span>
+          )
           return (
             <li key={s.id} className="card">
               <span>
                 {dateLabel(dayOf(s))} · {nameOf(s.userId)} ·{' '}
                 {type ? formatShift(s, { ...type, label: t(`shift.${s.code}`) }, group.timeZone) : s.code}
               </span>
-              <button type="button" className="button button-secondary" onClick={() => remove(s.id)}>
-                {t('manage.delete')}
-                <span className="visually-hidden">
-                  {' '}
-                  — {nameOf(s.userId)}, {dateLabel(dayOf(s))}
+              {confirming === s.id ? (
+                <span className="actions" onKeyDown={(e) => e.key === 'Escape' && cancel(s.id)}>
+                  <button type="button" className="button" disabled={pending} autoFocus onClick={() => remove(s.id)}>
+                    {t('manage.delete.confirm')}
+                    {who}
+                  </button>
+                  <button type="button" className="button button-secondary" disabled={pending} onClick={() => cancel(s.id)}>
+                    {t('manage.delete.cancel')}
+                    {who}
+                  </button>
                 </span>
-              </button>
+              ) : (
+                <button type="button" id={`del-${s.id}`} className="button button-secondary" disabled={pending} onClick={() => setConfirming(s.id)}>
+                  {t('manage.delete')}
+                  {who}
+                </button>
+              )}
             </li>
           )
         })}

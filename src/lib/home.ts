@@ -50,6 +50,28 @@ export function workingCountByDate(shifts: Shift[], timeZone: string): Record<st
   return counts
 }
 
+export interface RosterEntry {
+  userId: string
+  name: string
+  shift: Shift
+}
+
+// Everyone's shift per local date, rest included, ordered by start then name.
+export function rosterByDate(shifts: Shift[], members: Member[], timeZone: string): Record<string, RosterEntry[]> {
+  const names = new Map(members.map((m) => [m.id, m.name]))
+  const roster: Record<string, RosterEntry[]> = {}
+  for (const shift of shifts) {
+    const name = names.get(shift.userId)
+    if (name === undefined) continue
+    const d = localDateIn(new Date(shift.startsAt), timeZone)
+    ;(roster[d] ??= []).push({ userId: shift.userId, name, shift })
+  }
+  for (const list of Object.values(roster)) {
+    list.sort((a, b) => a.shift.startsAt.localeCompare(b.shift.startsAt) || a.name.localeCompare(b.name))
+  }
+  return roster
+}
+
 export function buildMonth(year: number, monthIndex: number): (string | null)[][] {
   const pad = (n: number) => String(n).padStart(2, '0')
   const lead = (new Date(Date.UTC(year, monthIndex, 1)).getUTCDay() + 6) % 7 // Monday = 0

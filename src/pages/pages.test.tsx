@@ -63,8 +63,8 @@ test('SettingsPage shows the group time zone and a leave-demo button', async () 
 test('FaqPage uses native details/summary and opens with the keyboard', () => {
   const { container } = renderWithI18n(<FaqPage />)
   const details = container.querySelectorAll('details')
-  expect(details.length).toBeGreaterThanOrEqual(4)
-  const summary = screen.getByText(/48 ore/, { selector: 'summary' })
+  expect(details).toHaveLength(2)
+  const summary = screen.getByText(/dove stanno/i, { selector: 'summary' })
   expect(summary.tagName).toBe('SUMMARY')
   // Native toggle on Enter/Space is browser behaviour; here we verify focusability and the open attribute path.
   summary.focus()
