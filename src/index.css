@@ -4,6 +4,8 @@
   --purple: #862d6b;
   --grey: #939696;
   --error: #b3261e;
+  /* Field borders need 3:1 against the page (WCAG 1.4.11); --grey is only 2.98:1 on white. */
+  --field: #767b7e;
   --dark: #2b3a47;
   --bg: #ffffff;
   --surface: #f2f4f6;
@@ -23,6 +25,9 @@
     --text: #e9eef2;
     --accent: #7db6ee;
     --error: #ff8a80;
+    --field: var(--grey);
+    /* The base purple is 1.76:1 on --surface here, so the Night marker nearly vanished. */
+    --purple: #c46aa6;
     --focus: var(--amber);
   }
 }
@@ -498,7 +503,7 @@ main {
 .form select {
   min-height: 44px;
   padding-inline: 0.75rem;
-  border: 1px solid var(--grey);
+  border: 1px solid var(--field);
   border-radius: 0.5rem;
   background: var(--bg);
   color: var(--text);
