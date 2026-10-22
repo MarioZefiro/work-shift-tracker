@@ -133,6 +133,18 @@ not the browser's. See ADR 0003 and `src/lib/*.test.ts`. If you touch date code,
   provide the same keys. FR, ES and DE are not native-reviewed (see README).
 - A top-level `ErrorBoundary` catches render errors.
 
+### 4.7 Forms and feedback
+
+- Submit buttons run their request through `usePending()` (`src/app/usePending.ts`) and are `disabled` while it
+  runs, so a double tap cannot post twice.
+- Success is announced in one always-mounted `<p role="status">` per screen (a live region that appears together
+  with its text is not announced). Failures use `<p role="alert" className="error">`; `.notice` is the same box
+  for information. Border and icon carry the meaning, not colour alone.
+- Deleting a shift takes two clicks (Confirm / Cancel inline, Escape cancels); focus returns to the Delete
+  button on cancel and to the list heading after a delete. Use the same pattern for any new destructive action.
+- Field borders use `--field` (at least 3:1 against the page). The dark block redefines `--purple` so the Night
+  marker stays visible on `--surface`.
+
 ## 5. Backend (Supabase)
 
 Everything is in `supabase/migrations/`, applied in file order. Rationale: ADR 0007.
