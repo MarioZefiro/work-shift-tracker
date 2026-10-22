@@ -104,19 +104,12 @@ export const de: Messages = {
   'group.demo': 'Demo-Abteilung',
   'settings.title': 'Einstellungen',
   'settings.timeZone': 'Zeitzone der Gruppe',
-  'settings.later': 'Änderungen und Benachrichtigungen folgen in einer späteren Version.',
   'settings.leave': 'Demo verlassen',
   'faq.title': 'Häufige Fragen',
   'faq.q1': 'Was ist diese App?',
   'faq.a1':
     'Ein gemeinsamer Schichtkalender für die Gruppe: Er zeigt, wer heute arbeitet, deine nächsten Schichten und den Monat. Dies ist eine Demo mit erfundenen Beispieldaten.',
-  'faq.q2': 'Wie funktionieren die 48 Stunden?',
+  'faq.q2': 'Wo liegen meine Daten?',
   'faq.a2':
-    'Die 48-Stunden-Regel betrifft Anfragen zum Schichttausch. Sie ist noch nicht aktiv und kommt in einer späteren Version.',
-  'faq.q3': 'Wie wird abgestimmt?',
-  'faq.a3':
-    'Offene Vorschläge können in einer späteren Version abgestimmt werden. Vorerst ist die Demo nur lesbar.',
-  'faq.q4': 'Wo liegen meine Daten?',
-  'faq.a4':
     'In dieser Demo sind die Daten Beispieldaten und werden in deinem Browser erzeugt: Sie verlassen dein Gerät nicht und es gibt kein Konto.',
 }

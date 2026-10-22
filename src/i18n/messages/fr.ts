@@ -105,19 +105,12 @@ export const fr: Messages = {
   'group.demo': 'Équipe démo',
   'settings.title': 'Paramètres',
   'settings.timeZone': 'Fuseau horaire du groupe',
-  'settings.later': 'Les modifications et les notifications arriveront dans une version ultérieure.',
   'settings.leave': 'Quitter la démo',
   'faq.title': 'Questions fréquentes',
   'faq.q1': 'Qu’est-ce que cette application ?',
   'faq.a1':
     'Un calendrier des services partagé par le groupe : il montre qui travaille aujourd’hui, tes prochains services et le mois. Ceci est une démo avec des données d’exemple inventées.',
-  'faq.q2': 'Comment fonctionne la règle des 48 heures ?',
+  'faq.q2': 'Où sont mes données ?',
   'faq.a2':
-    'La règle des 48 heures concernera les demandes de changement de service. Elle n’est pas encore active : elle arrivera dans une version ultérieure.',
-  'faq.q3': 'Comment voter ?',
-  'faq.a3':
-    'Les propositions ouvertes pourront être votées dans une version ultérieure. Pour l’instant, la démo est en lecture seule.',
-  'faq.q4': 'Où sont mes données ?',
-  'faq.a4':
     'Dans cette démo, les données sont des exemples générés dans ton navigateur : elles ne quittent pas ton appareil et il n’y a aucun compte.',
 }

@@ -29,7 +29,6 @@ export function SettingsPage({
             <dt>{t('settings.timeZone')}</dt>
             <dd>{group.timeZone}</dd>
           </dl>
-          <p className="hint">{t('settings.later')}</p>
           {leave}
         </div>
       )}

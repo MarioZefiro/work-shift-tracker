@@ -111,19 +111,13 @@ export const it = {
   'group.demo': 'Reparto demo',
   'settings.title': 'Impostazioni',
   'settings.timeZone': 'Fuso orario del gruppo',
-  'settings.later': 'Le modifiche e le notifiche arriveranno in una versione successiva.',
   'settings.leave': 'Esci dalla demo',
   'faq.title': 'Domande frequenti',
   'faq.q1': "Che cos'è quest'app?",
   'faq.a1':
     'Un calendario dei turni condiviso dal gruppo: mostra chi lavora oggi, i tuoi prossimi turni e il mese. Questa è una demo con dati di esempio inventati.',
-  'faq.q2': 'Come funzionano le 48 ore?',
+  'faq.q2': 'Dove stanno i miei dati?',
   'faq.a2':
-    'La regola delle 48 ore riguarderà le richieste di cambio turno. Non è ancora attiva: arriverà in una versione successiva.',
-  'faq.q3': 'Come si vota?',
-  'faq.a3': 'Le proposte aperte si potranno votare in una versione successiva. Per ora la demo è in sola lettura.',
-  'faq.q4': 'Dove stanno i miei dati?',
-  'faq.a4':
     'In questa demo i dati sono di esempio e vengono generati nel tuo browser: non lasciano il tuo dispositivo e non c’è nessun account.',
 } satisfies Record<string, Entry>
 

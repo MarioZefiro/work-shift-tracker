@@ -104,18 +104,12 @@ export const en: Messages = {
   'group.demo': 'Demo team',
   'settings.title': 'Settings',
   'settings.timeZone': "Group's time zone",
-  'settings.later': 'Changes and notifications will arrive in a later version.',
   'settings.leave': 'Leave the demo',
   'faq.title': 'Frequently asked questions',
   'faq.q1': 'What is this app?',
   'faq.a1':
     "A shift calendar shared by the group: it shows who works today, your next shifts and the month. This is a demo with invented sample data.",
-  'faq.q2': 'How does the 48-hour rule work?',
+  'faq.q2': 'Where is my data stored?',
   'faq.a2':
-    'The 48-hour rule will apply to shift change requests. It is not active yet: it will arrive in a later version.',
-  'faq.q3': 'How does voting work?',
-  'faq.a3': 'Open proposals will be votable in a later version. For now the demo is read-only.',
-  'faq.q4': 'Where is my data stored?',
-  'faq.a4':
     'In this demo the data is sample data generated in your browser: it never leaves your device and there is no account.',
 }

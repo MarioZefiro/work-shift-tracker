@@ -104,19 +104,12 @@ export const es: Messages = {
   'group.demo': 'Equipo demo',
   'settings.title': 'Ajustes',
   'settings.timeZone': 'Zona horaria del grupo',
-  'settings.later': 'Los cambios y las notificaciones llegarán en una versión posterior.',
   'settings.leave': 'Salir de la demo',
   'faq.title': 'Preguntas frecuentes',
   'faq.q1': '¿Qué es esta aplicación?',
   'faq.a1':
     'Un calendario de turnos compartido por el grupo: muestra quién trabaja hoy, tus próximos turnos y el mes. Esto es una demo con datos de ejemplo inventados.',
-  'faq.q2': '¿Cómo funciona la regla de las 48 horas?',
+  'faq.q2': '¿Dónde están mis datos?',
   'faq.a2':
-    'La regla de las 48 horas afectará a las solicitudes de cambio de turno. Todavía no está activa: llegará en una versión posterior.',
-  'faq.q3': '¿Cómo se vota?',
-  'faq.a3':
-    'Las propuestas abiertas se podrán votar en una versión posterior. Por ahora la demo es de solo lectura.',
-  'faq.q4': '¿Dónde están mis datos?',
-  'faq.a4':
     'En esta demo los datos son de ejemplo y se generan en tu navegador: no salen de tu dispositivo y no hay ninguna cuenta.',
 }
