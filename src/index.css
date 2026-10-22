@@ -236,10 +236,30 @@ main {
   background: none;
 }
 
-.mini-month td span {
+.mini-month td > span {
   display: block;
   font-size: 0.75rem;
   opacity: 0.9;
+}
+
+.day-top {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.15rem;
+}
+
+/* Own surface and text colour keep the letter readable on every heat level; the border carries the shift colour. */
+.day-mark {
+  min-width: 1rem;
+  padding-inline: 0.1rem;
+  border: 2px solid var(--shift, var(--grey));
+  border-radius: 0.25rem;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 1;
 }
 
 .mini-month td[aria-current='date'] {

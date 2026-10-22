@@ -85,7 +85,7 @@ test('the mini month is a table with a caption and labelled days', async () => {
   renderWithI18n(<HomePage source={source([...base, ...others])} now={NOW} />)
   const table = await screen.findByRole('table', { name: 'ottobre 2026' })
   expect(within(table).getByLabelText('19 ottobre, 2 in servizio')).toBeInTheDocument()
-  expect(within(table).getByLabelText('20 ottobre, 1 in servizio')).toBeInTheDocument()
+  expect(within(table).getByLabelText('20 ottobre, 1 in servizio, tuo turno: Mattina')).toBeInTheDocument()
 })
 
 test('ignores a superseded load that resolves last', async () => {
@@ -122,4 +122,10 @@ test.each([
   renderWithI18n(<HomePage source={makeSource({ shifts })} now={new Date(nowIso)} />)
   await screen.findByText('Nessun turno oggi')
   expect(shifts).toHaveBeenCalledWith({ from, to })
+})
+
+test('a month day names my own shift, not only the head count', async () => {
+  renderWithI18n(<HomePage source={source(base)} now={NOW} />)
+  const table = await screen.findByRole('table', { name: 'ottobre 2026' })
+  expect(within(table).getByLabelText('22 ottobre, 1 in servizio, tuo turno: Pomeriggio')).toHaveTextContent('P')
 })

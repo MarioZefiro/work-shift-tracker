@@ -81,6 +81,7 @@ export function HomePage({ source, now }: { source: DataSource; now: Date }) {
         <MiniMonth
           today={today}
           counts={workingCountByDate(shifts, group.timeZone)}
+          mine={Object.fromEntries(shifts.filter((s) => s.userId === source.userId).map((s) => [dateOf(s), s.code]))}
           hasData={new Set(shifts.map((s) => localDateIn(new Date(s.startsAt), group.timeZone)))}
         />
       </section>
