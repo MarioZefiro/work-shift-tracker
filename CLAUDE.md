@@ -50,6 +50,7 @@ Progetto vetrina per il profilo GitHub: app frontend piccola, finita, online. Ob
 | Analisi design | agent `design-analyst` |
 | Accessibilità | agent `lighthouse-checker` |
 | Grafo di conoscenza | agent `graph-keeper` |
+| Decisione con posta in gioco | `/council`, solo a inizio feature (analisi) o a fine (review); costa 11 chiamate Opus, mai in mezzo |
 
 ## Lingua
 
