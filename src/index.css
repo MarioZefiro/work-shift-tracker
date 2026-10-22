@@ -208,6 +208,23 @@ main {
   height: 44px;
 }
 
+/* The number stays visible in every cell: the shade only reinforces it. */
+.mini-month td[data-level='1'] {
+  background: color-mix(in srgb, var(--accent) 10%, var(--surface));
+}
+
+.mini-month td[data-level='2'] {
+  background: color-mix(in srgb, var(--accent) 20%, var(--surface));
+}
+
+.mini-month td[data-level='3'] {
+  background: color-mix(in srgb, var(--accent) 30%, var(--surface));
+}
+
+.mini-month td[data-level='4'] {
+  background: color-mix(in srgb, var(--accent) 40%, var(--surface));
+}
+
 .mini-month td:empty {
   background: none;
 }
