@@ -24,7 +24,7 @@ Everything below is in `src/` today.
 - Accessibility basics: skip link, focus moves to the main area on navigation, labelled lists and table cells, `aria-current` on the active page and day.
 - Signed-in mode (needs Supabase, see [Run with Supabase](#run-with-supabase)): sign in with a link sent by email, no password; create groups and switch between them; share a single-use invitation link (valid 7 days, up to 30 members); the group manager assigns or deletes a member's shift, or generates a rotation of three eight-hour shifts for the people picked.
 
-The live site is built without Supabase variables, so it runs the demo only. It is deployed to GitHub Pages by `.github/workflows/deploy.yml` on every push to `main`, after `npm test` passes.
+The live site is built with the Supabase URL and publishable key, so it offers both the demo and signed-in mode. It is deployed to GitHub Pages by `.github/workflows/deploy.yml` on every push to `main`, after `npm test` passes.
 
 Not built: Google sign-in, shift swaps and voting, notifications, deleting an account, a hosted Supabase project for signed-in mode.
 
